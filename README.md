@@ -13,7 +13,7 @@ An evidence-led supply-chain resilience simulator built with **Neo4j, FastAPI, G
 **AIDAMS · GraphDB · Level 2 · Project 3**  
 **Tan YILDIRIM — B00822334**
 
-[Quick start](#quick-start) · [API](#api) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
+[Türkçe kullanım rehberi](docs/USER_GUIDE_TR.md) · [Quick start](#quick-start) · [API](#api) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
 
 </div>
 
@@ -153,23 +153,25 @@ make benchmark           # real PROFILE plans and latency evidence
 make demo                # execute demo.ipynb against running services + model
 ```
 
-Development dependencies are universally resolved in `requirements-lock.txt`, with OS markers. The API image applies that lock as constraints for runtime requirements. The first local unit/API run passed 85 tests at approximately 84% branch-inclusive coverage; the initial integration run passed 9 real-service tests. Final results are recorded in [verification evidence](reports/verification.json).
+Development dependencies are universally resolved in `requirements-lock.txt`, with OS markers. The API image applies that lock as constraints for runtime requirements. Final local verification passed **95 unit/API/security tests and 10 real integration tests**, with **84.69% branch-inclusive coverage** and **pylint 10.00/10**. Both GitHub Actions quality jobs also passed on the implementation merge. Results and run links are recorded in [verification evidence](reports/verification.json).
 
 [demo.ipynb](demo.ipynb) explores real graph records, visualizes the network and scenario recovery, runs GDS, inspects ML/PROFILE reports, and exercises a successful local LLM request and rejected write. [Defense guide](docs/DEFENSE.md) provides the live presentation sequence and query explanations.
 
 ## Container registry
 
-The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). Publication and anonymous pull verification are tracked separately in the release evidence; a configured workflow alone is not proof of a published public image.
+The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). The public image was downloaded with an empty Docker credential configuration and exercised against real Neo4j/GDS: health, product inventory, outage simulation and centrality passed. See [registry verification](reports/registry-verification.json). The tested implementation is tagged in [release v1.0.0](https://github.com/tnyldrm23-afk/supplygraph/releases/tag/v1.0.0); subsequent delivery-evidence commits do not change the API runtime.
 
 ```bash
-# After the image is published and public:
-SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:latest docker compose up -d
+# Use the published API image with the repository's Compose stack:
+make setup
+SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:1.0.0 docker compose pull api
+SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:1.0.0 docker compose up -d --no-build
 ```
 
 ## Solo workflow and limitations
 
-This is an honest **solo submission**. `main` is stable and implementation uses `feat/supplygraph`, with a substantial PR and explicitly labeled self-review. No teammate contributions, peer reviews or balanced team commit distribution are fabricated. AI assistance is disclosed; Tan remains responsible for understanding and explaining every submitted design decision.
+This is an honest **solo submission**. `main` is stable and implementation uses `feat/supplygraph`, with a [substantial merged PR](https://github.com/tnyldrm23-afk/supplygraph/pull/1) and explicitly labeled self-review. No teammate contributions, peer reviews or balanced team commit distribution are fabricated. AI assistance is disclosed; Tan remains responsible for understanding and explaining every submitted design decision.
 
-Limits: fictional topology; historical average demand; independent per-SKU capacities; no BOM, inventories, queues, dated delivery guarantees or causal ML claims. Retailer allocation is deterministic rather than fairness optimized. Source observations date from 2015–2018. Read [rubric evidence](docs/RUBRIC.md), [roadmap](docs/ROADMAP.md) and [current status](docs/STATUS.md) for verified and externally pending work.
+Limits: fictional topology; historical average demand; independent per-SKU capacities; no BOM, inventories, queues, dated delivery guarantees or causal ML claims. Retailer allocation is deterministic rather than fairness optimized. Source observations date from 2015–2018. Read [rubric evidence](docs/RUBRIC.md), [roadmap](docs/ROADMAP.md) and [current status](docs/STATUS.md) for the verified delivery evidence and declared limitations.
 
 Code: MIT. DataCo-derived observations: CC BY 4.0.
