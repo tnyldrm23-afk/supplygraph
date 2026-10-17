@@ -1,0 +1,711 @@
+{
+  "environment": "Local Docker Neo4j 5.26.12, 118 products, 962 scenario lanes",
+  "method": "5 warmups + 30 timed consumed queries; sequential; Python perf_counter",
+  "caution": "Tiny catalog favors plan/DB-hit evidence; no guaranteed latency speedup claimed.",
+  "results": {
+    "before_non_sargable": {
+      "query": "MATCH (p:Product) WHERE toLower(p.id)=toLower($sku) RETURN p.id",
+      "parameters": {
+        "sku": "SKU-1360"
+      },
+      "repetitions": 30,
+      "median_ms": 1.418,
+      "p95_ms": 3.393,
+      "min_ms": 1.102,
+      "operators": [
+        {
+          "operator": "ProduceResults@neo4j",
+          "db_hits": 0,
+          "rows": 1,
+          "arguments": {
+            "GlobalMemory": 64,
+            "planner-impl": "IDP",
+            "Memory": 0,
+            "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+------------------+----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n| Operator         | Id | Details                              | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses |\n+------------------+----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n| +ProduceResults  |  0 | `p.id`                               |             89 |    1 |       0 |              0 |                    0/0 |\n| |                +----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n| +Projection      |  1 | cache[p.id] AS `p.id`                |             89 |    1 |       0 |                |                    0/0 |\n| |                +----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n| +Filter          |  2 | toLower(cache[p.id]) = toLower($sku) |             89 |    1 |     118 |                |                    0/0 |\n| |                +----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n| +NodeByLabelScan |  3 | p:Product                            |            118 |  118 |     119 |                |                    0/0 |\n+------------------+----+--------------------------------------+----------------+------+---------+----------------+------------------------+\n\nTotal database accesses: 237, total allocated memory: 64\n",
+            "runtime": "SLOTTED",
+            "runtime-impl": "SLOTTED",
+            "version": "5",
+            "DbHits": 0,
+            "Details": "`p.id`",
+            "planner-version": "5.26",
+            "runtime-version": "5.26",
+            "Id": 0,
+            "EstimatedRows": 88.5,
+            "planner": "COST",
+            "PageCacheMisses": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 0,
+          "rows": 1,
+          "arguments": {
+            "Details": "cache[p.id] AS `p.id`",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 88.5,
+            "DbHits": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 118,
+          "rows": 1,
+          "arguments": {
+            "Details": "toLower(cache[p.id]) = toLower($sku)",
+            "Id": 2,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 88.5,
+            "DbHits": 118,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "NodeByLabelScan@neo4j",
+          "db_hits": 119,
+          "rows": 118,
+          "arguments": {
+            "Details": "p:Product",
+            "Id": 3,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 118.0,
+            "DbHits": 119,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        }
+      ]
+    },
+    "after_index_seek": {
+      "query": "MATCH (p:Product {id:$sku}) RETURN p.id",
+      "parameters": {
+        "sku": "SKU-1360"
+      },
+      "repetitions": 30,
+      "median_ms": 1.19,
+      "p95_ms": 2.402,
+      "min_ms": 1.01,
+      "operators": [
+        {
+          "operator": "ProduceResults@neo4j",
+          "db_hits": 0,
+          "rows": 1,
+          "arguments": {
+            "GlobalMemory": 64,
+            "planner-impl": "IDP",
+            "Memory": 0,
+            "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+----------------------+----+---------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| Operator             | Id | Details                                           | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses |\n+----------------------+----+---------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +ProduceResults      |  0 | `p.id`                                            |              1 |    1 |       0 |              0 |                    0/0 |\n| |                    +----+---------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +Projection          |  1 | cache[p.id] AS `p.id`                             |              1 |    1 |       0 |                |                    0/0 |\n| |                    +----+---------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +NodeUniqueIndexSeek |  2 | UNIQUE p:Product(id) WHERE id = $sku, cache[p.id] |              1 |    1 |       2 |                |                    0/0 |\n+----------------------+----+---------------------------------------------------+----------------+------+---------+----------------+------------------------+\n\nTotal database accesses: 2, total allocated memory: 64\n",
+            "runtime": "SLOTTED",
+            "runtime-impl": "SLOTTED",
+            "version": "5",
+            "DbHits": 0,
+            "Details": "`p.id`",
+            "planner-version": "5.26",
+            "runtime-version": "5.26",
+            "Id": 0,
+            "EstimatedRows": 1.0,
+            "planner": "COST",
+            "PageCacheMisses": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 0,
+          "rows": 1,
+          "arguments": {
+            "Details": "cache[p.id] AS `p.id`",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 1.0,
+            "DbHits": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "NodeUniqueIndexSeek@neo4j",
+          "db_hits": 2,
+          "rows": 1,
+          "arguments": {
+            "Details": "UNIQUE p:Product(id) WHERE id = $sku, cache[p.id]",
+            "Id": 2,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 1.0,
+            "DbHits": 2,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        }
+      ]
+    },
+    "product_provenance": {
+      "query": "\nMATCH (l:Lane)-[:CARRIES]->(p:Product {id: $sku})\nMATCH (l)-[:ORIGIN]->(a:Organization), (l)-[:DESTINATION]->(b:Organization)\nRETURN l.id AS id, a.id AS origin, b.id AS destination, p.id AS sku,\n       l.capacity AS capacity, l.lead_days AS lead_days, l.backup AS backup,\n       l.provenance AS provenance\nORDER BY l.id LIMIT $limit\n",
+      "parameters": {
+        "sku": "SKU-1360",
+        "limit": 100
+      },
+      "repetitions": 30,
+      "median_ms": 1.771,
+      "p95_ms": 2.853,
+      "min_ms": 1.358,
+      "operators": [
+        {
+          "operator": "ProduceResults@neo4j",
+          "db_hits": 0,
+          "rows": 8,
+          "arguments": {
+            "Order": "id ASC",
+            "GlobalMemory": 3224,
+            "planner-impl": "IDP",
+            "Memory": 0,
+            "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+----------------------+----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| Operator             | Id | Details                                                                                      | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses | Ordered by |\n+----------------------+----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +ProduceResults      |  0 | id, origin, destination, sku, capacity, lead_days, backup, provenance                        |              8 |    8 |       0 |              0 |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+            |\n| +Projection          |  1 | cache[l.lead_days] AS lead_days, a.id AS origin, b.id AS destination,                        |              8 |    8 |      16 |                |                    0/0 |            |\n| |                    |    | cache[l.provenance] AS provenance, cache[l.capacity] AS capacity, cache[l.backup] AS backup, |                |      |         |                |                        |            |\n| |                    |    | cache[p.id] AS sku                                                                           |                |      |         |                |                        |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+            |\n| +CacheProperties     |  2 | cache[l.lead_days], cache[l.provenance], cache[l.backup], cache[l.capacity]                  |              8 |    8 |      32 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+            |\n| +Top                 |  3 | id ASC LIMIT $limit                                                                          |              8 |    8 |       0 |           3160 |                    0/0 | id ASC     |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Projection          |  4 | l.id AS id                                                                                   |              8 |    8 |       8 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Filter              |  5 | a:Organization                                                                               |              8 |    8 |       8 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Expand(All)         |  6 | (l)-[anon_1:ORIGIN]->(a)                                                                     |              8 |    8 |      32 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Filter              |  7 | b:Organization                                                                               |              8 |    8 |       8 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Expand(All)         |  8 | (l)-[anon_2:DESTINATION]->(b)                                                                |              8 |    8 |      32 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Filter              |  9 | l:Lane                                                                                       |              8 |    8 |       8 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +Expand(All)         | 10 | (p)<-[anon_0:CARRIES]-(l)                                                                    |              8 |    8 |      42 |                |                    0/0 |            |\n| |                    +----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n| +NodeUniqueIndexSeek | 11 | UNIQUE p:Product(id) WHERE id = $sku, cache[p.id]                                            |              1 |    1 |       2 |                |                    0/0 |            |\n+----------------------+----+----------------------------------------------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------+\n\nTotal database accesses: 188, total allocated memory: 3224\n",
+            "runtime": "SLOTTED",
+            "runtime-impl": "SLOTTED",
+            "version": "5",
+            "DbHits": 0,
+            "Details": "id, origin, destination, sku, capacity, lead_days, backup, provenance",
+            "planner-version": "5.26",
+            "runtime-version": "5.26",
+            "Id": 0,
+            "EstimatedRows": 8.152542372881356,
+            "planner": "COST",
+            "PageCacheMisses": 0,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 16,
+          "rows": 8,
+          "arguments": {
+            "Order": "id ASC",
+            "Details": "cache[l.lead_days] AS lead_days, a.id AS origin, b.id AS destination, cache[l.provenance] AS provenance, cache[l.capacity] AS capacity, cache[l.backup] AS backup, cache[p.id] AS sku",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 16,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "CacheProperties@neo4j",
+          "db_hits": 32,
+          "rows": 8,
+          "arguments": {
+            "Order": "id ASC",
+            "Details": "cache[l.lead_days], cache[l.provenance], cache[l.backup], cache[l.capacity]",
+            "Id": 2,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 32,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Top@neo4j",
+          "db_hits": 0,
+          "rows": 8,
+          "arguments": {
+            "Order": "id ASC",
+            "Details": "id ASC LIMIT $limit",
+            "Memory": 3160,
+            "Id": 3,
+            "EstimatedRows": 8.152542372881356,
+            "PageCacheMisses": 0,
+            "DbHits": 0,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 8,
+          "rows": 8,
+          "arguments": {
+            "Details": "l.id AS id",
+            "Id": 4,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 8,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 8,
+          "rows": 8,
+          "arguments": {
+            "Details": "a:Organization",
+            "Id": 5,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 8,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Expand(All)@neo4j",
+          "db_hits": 32,
+          "rows": 8,
+          "arguments": {
+            "Details": "(l)-[anon_1:ORIGIN]->(a)",
+            "Id": 6,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 32,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 8,
+          "rows": 8,
+          "arguments": {
+            "Details": "b:Organization",
+            "Id": 7,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 8,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Expand(All)@neo4j",
+          "db_hits": 32,
+          "rows": 8,
+          "arguments": {
+            "Details": "(l)-[anon_2:DESTINATION]->(b)",
+            "Id": 8,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 32,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 8,
+          "rows": 8,
+          "arguments": {
+            "Details": "l:Lane",
+            "Id": 9,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 8,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Expand(All)@neo4j",
+          "db_hits": 42,
+          "rows": 8,
+          "arguments": {
+            "Details": "(p)<-[anon_0:CARRIES]-(l)",
+            "Id": 10,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 8.152542372881356,
+            "DbHits": 42,
+            "Rows": 8,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "NodeUniqueIndexSeek@neo4j",
+          "db_hits": 2,
+          "rows": 1,
+          "arguments": {
+            "Details": "UNIQUE p:Product(id) WHERE id = $sku, cache[p.id]",
+            "Id": 11,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 1.0,
+            "DbHits": 2,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        }
+      ]
+    },
+    "bounded_impact": {
+      "query": "\nMATCH p=(s:Organization {id: $supplier_id})-[:FLOW*1..6]->(o:Organization)\nWHERE length(p) <= $depth\nWITH o, min(length(p)) AS hops\nRETURN o.id AS id, o.name AS name, o.kind AS kind, hops\nORDER BY hops, id LIMIT $limit\n",
+      "parameters": {
+        "supplier_id": "SUP-01",
+        "depth": 6,
+        "limit": 100
+      },
+      "repetitions": 30,
+      "median_ms": 1.75,
+      "p95_ms": 5.497,
+      "min_ms": 1.36,
+      "operators": [
+        {
+          "operator": "ProduceResults@neo4j",
+          "db_hits": 0,
+          "rows": 6,
+          "arguments": {
+            "Order": "hops ASC, id ASC",
+            "GlobalMemory": 2528,
+            "planner-impl": "IDP",
+            "Memory": 0,
+            "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+-----------------------+----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| Operator              | Id | Details                                                 | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses | Ordered by       |\n+-----------------------+----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +ProduceResults       |  0 | id, name, kind, hops                                    |              0 |    6 |       0 |              0 |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+                  |\n| +Projection           |  1 | cache[o.name] AS name, cache[o.kind] AS kind            |              0 |    6 |       0 |                |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+                  |\n| +CacheProperties      |  2 | cache[o.name], cache[o.kind]                            |              0 |    6 |      12 |                |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+                  |\n| +Top                  |  3 | hops ASC, id ASC LIMIT $limit                           |              0 |    6 |       0 |           1624 |                    0/0 | hops ASC, id ASC |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +Projection           |  4 | o.id AS id                                              |              0 |    6 |       6 |                |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +EagerAggregation     |  5 | o, min(length((s)-[anon_0*]->(o))) AS hops              |              0 |    6 |       0 |           1008 |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +Filter               |  6 | length((s)-[anon_0*]->(o)) <= $depth AND o:Organization |              0 |    7 |       7 |                |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +VarLengthExpand(All) |  7 | (s)-[anon_0:FLOW*..6]->(o)                              |              1 |    7 |      15 |            344 |                    0/0 |                  |\n| |                     +----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n| +NodeUniqueIndexSeek  |  8 | UNIQUE s:Organization(id) WHERE id = $supplier_id       |              1 |    1 |       2 |                |                    0/0 |                  |\n+-----------------------+----+---------------------------------------------------------+----------------+------+---------+----------------+------------------------+------------------+\n\nTotal database accesses: 42, total allocated memory: 2528\n",
+            "runtime": "SLOTTED",
+            "runtime-impl": "SLOTTED",
+            "version": "5",
+            "DbHits": 0,
+            "Details": "id, name, kind, hops",
+            "planner-version": "5.26",
+            "runtime-version": "5.26",
+            "Id": 0,
+            "EstimatedRows": 0.3005407366930648,
+            "planner": "COST",
+            "PageCacheMisses": 0,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 0,
+          "rows": 6,
+          "arguments": {
+            "Order": "hops ASC, id ASC",
+            "Details": "cache[o.name] AS name, cache[o.kind] AS kind",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 0.3005407366930648,
+            "DbHits": 0,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "CacheProperties@neo4j",
+          "db_hits": 12,
+          "rows": 6,
+          "arguments": {
+            "Order": "hops ASC, id ASC",
+            "Details": "cache[o.name], cache[o.kind]",
+            "Id": 2,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 0.3005407366930648,
+            "DbHits": 12,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Top@neo4j",
+          "db_hits": 0,
+          "rows": 6,
+          "arguments": {
+            "Order": "hops ASC, id ASC",
+            "Details": "hops ASC, id ASC LIMIT $limit",
+            "Memory": 1624,
+            "Id": 3,
+            "EstimatedRows": 0.3005407366930648,
+            "PageCacheMisses": 0,
+            "DbHits": 0,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 6,
+          "rows": 6,
+          "arguments": {
+            "Details": "o.id AS id",
+            "Id": 4,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 0.3005407366930648,
+            "DbHits": 6,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "EagerAggregation@neo4j",
+          "db_hits": 0,
+          "rows": 6,
+          "arguments": {
+            "Details": "o, min(length((s)-[anon_0*]->(o))) AS hops",
+            "Memory": 1008,
+            "Id": 5,
+            "EstimatedRows": 0.3005407366930648,
+            "PageCacheMisses": 0,
+            "DbHits": 0,
+            "Rows": 6,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 7,
+          "rows": 7,
+          "arguments": {
+            "Details": "length((s)-[anon_0*]->(o)) <= $depth AND o:Organization",
+            "Id": 6,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 0.3005407366930648,
+            "DbHits": 7,
+            "Rows": 7,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "VarLengthExpand(All)@neo4j",
+          "db_hits": 15,
+          "rows": 7,
+          "arguments": {
+            "Details": "(s)-[anon_0:FLOW*..6]->(o)",
+            "Memory": 344,
+            "Id": 7,
+            "EstimatedRows": 1.0018024556435492,
+            "PageCacheMisses": 0,
+            "DbHits": 15,
+            "Rows": 7,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "NodeUniqueIndexSeek@neo4j",
+          "db_hits": 2,
+          "rows": 1,
+          "arguments": {
+            "Details": "UNIQUE s:Organization(id) WHERE id = $supplier_id",
+            "Id": 8,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 1.0,
+            "DbHits": 2,
+            "Rows": 1,
+            "PageCacheHits": 0
+          }
+        }
+      ]
+    },
+    "bottleneck_aggregation": {
+      "query": "\nMATCH (s:Organization)-[:ORIGIN]-(l:Lane)-[:CARRIES]->(p:Product)\nWHERE s.kind = 'supplier' AND l.backup = false\nWITH p, collect(DISTINCT s.id) AS suppliers\nWHERE size(suppliers) = 1\nRETURN p.id AS sku, p.name AS name, suppliers[0] AS supplier_id,\n       p.daily_demand AS daily_demand\nORDER BY daily_demand DESC, sku LIMIT $limit\n",
+      "parameters": {
+        "limit": 100
+      },
+      "repetitions": 30,
+      "median_ms": 5.058,
+      "p95_ms": 7.563,
+      "min_ms": 4.146,
+      "operators": [
+        {
+          "operator": "ProduceResults@neo4j",
+          "db_hits": 0,
+          "rows": 100,
+          "arguments": {
+            "Order": "daily_demand DESC, sku ASC",
+            "GlobalMemory": 111488,
+            "planner-impl": "IDP",
+            "Memory": 0,
+            "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+-------------------+----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| Operator          | Id | Details                                                     | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses | Ordered by                 |\n+-------------------+----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +ProduceResults   |  0 | sku, name, supplier_id, daily_demand                        |              3 |  100 |       0 |              0 |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+                            |\n| +Projection       |  1 | p.name AS name, suppliers[$autoint_2] AS supplier_id        |              3 |  100 |     100 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+                            |\n| +Top              |  2 | daily_demand DESC, sku ASC LIMIT $limit                     |              3 |  100 |       0 |          58648 |                    0/0 | daily_demand DESC, sku ASC |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Projection       |  3 | cache[p.daily_demand] AS daily_demand, cache[p.id] AS sku   |              3 |  118 |       0 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +CacheProperties  |  4 | cache[p.daily_demand], cache[p.id]                          |              3 |  118 |     236 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Filter           |  5 | size(suppliers) = $autoint_1                                |              3 |  118 |       0 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +EagerAggregation |  6 | p, collect(DISTINCT cache[s.id]) AS suppliers               |              3 |  118 |       0 |          75064 |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Filter           |  7 | p:Product                                                   |             12 |  118 |     118 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Expand(All)      |  8 | (l)-[anon_1:CARRIES]->(p)                                   |             12 |  118 |     472 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Filter           |  9 | l.backup = false AND l:Lane                                 |             12 |  118 |     324 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +Expand(All)      | 10 | (s)-[anon_0:ORIGIN]-(l)                                     |            241 |  206 |     218 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +CacheProperties  | 11 | cache[s.id]                                                 |              3 |    4 |       4 |                |                    0/0 |                            |\n| |                 +----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n| +NodeIndexSeek    | 12 | RANGE INDEX s:Organization(kind) WHERE kind = $autostring_0 |              3 |    4 |       5 |                |                    0/0 |                            |\n+-------------------+----+-------------------------------------------------------------+----------------+------+---------+----------------+------------------------+----------------------------+\n\nTotal database accesses: 1477, total allocated memory: 111488\n",
+            "runtime": "SLOTTED",
+            "runtime-impl": "SLOTTED",
+            "version": "5",
+            "DbHits": 0,
+            "Details": "sku, name, supplier_id, daily_demand",
+            "planner-version": "5.26",
+            "runtime-version": "5.26",
+            "Id": 0,
+            "EstimatedRows": 2.6048332480218384,
+            "planner": "COST",
+            "PageCacheMisses": 0,
+            "Rows": 100,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 100,
+          "rows": 100,
+          "arguments": {
+            "Order": "daily_demand DESC, sku ASC",
+            "Details": "p.name AS name, suppliers[$autoint_2] AS supplier_id",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 2.6048332480218384,
+            "DbHits": 100,
+            "Rows": 100,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Top@neo4j",
+          "db_hits": 0,
+          "rows": 100,
+          "arguments": {
+            "Order": "daily_demand DESC, sku ASC",
+            "Details": "daily_demand DESC, sku ASC LIMIT $limit",
+            "Memory": 58648,
+            "Id": 2,
+            "EstimatedRows": 2.6048332480218384,
+            "PageCacheMisses": 0,
+            "DbHits": 0,
+            "Rows": 100,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Projection@neo4j",
+          "db_hits": 0,
+          "rows": 118,
+          "arguments": {
+            "Details": "cache[p.daily_demand] AS daily_demand, cache[p.id] AS sku",
+            "Id": 3,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 2.6048332480218384,
+            "DbHits": 0,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "CacheProperties@neo4j",
+          "db_hits": 236,
+          "rows": 118,
+          "arguments": {
+            "Details": "cache[p.daily_demand], cache[p.id]",
+            "Id": 4,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 2.6048332480218384,
+            "DbHits": 236,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 0,
+          "rows": 118,
+          "arguments": {
+            "Details": "size(suppliers) = $autoint_1",
+            "Id": 5,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 2.6048332480218384,
+            "DbHits": 0,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "EagerAggregation@neo4j",
+          "db_hits": 0,
+          "rows": 118,
+          "arguments": {
+            "Details": "p, collect(DISTINCT cache[s.id]) AS suppliers",
+            "Memory": 75064,
+            "Id": 6,
+            "EstimatedRows": 3.473110997362451,
+            "PageCacheMisses": 0,
+            "DbHits": 0,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 118,
+          "rows": 118,
+          "arguments": {
+            "Details": "p:Product",
+            "Id": 7,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 12.0625,
+            "DbHits": 118,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Expand(All)@neo4j",
+          "db_hits": 472,
+          "rows": 118,
+          "arguments": {
+            "Details": "(l)-[anon_1:CARRIES]->(p)",
+            "Id": 8,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 12.0625,
+            "DbHits": 472,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Filter@neo4j",
+          "db_hits": 324,
+          "rows": 118,
+          "arguments": {
+            "Details": "l.backup = false AND l:Lane",
+            "Id": 9,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 12.0625,
+            "DbHits": 324,
+            "Rows": 118,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "Expand(All)@neo4j",
+          "db_hits": 218,
+          "rows": 206,
+          "arguments": {
+            "Details": "(s)-[anon_0:ORIGIN]-(l)",
+            "Id": 10,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 241.25,
+            "DbHits": 218,
+            "Rows": 206,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "CacheProperties@neo4j",
+          "db_hits": 4,
+          "rows": 4,
+          "arguments": {
+            "Details": "cache[s.id]",
+            "Id": 11,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 3.25,
+            "DbHits": 4,
+            "Rows": 4,
+            "PageCacheHits": 0
+          }
+        },
+        {
+          "operator": "NodeIndexSeek@neo4j",
+          "db_hits": 5,
+          "rows": 4,
+          "arguments": {
+            "Details": "RANGE INDEX s:Organization(kind) WHERE kind = $autostring_0",
+            "Id": 12,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 3.25,
+            "DbHits": 5,
+            "Rows": 4,
+            "PageCacheHits": 0
+          }
+        }
+      ]
+    }
+  }
+}

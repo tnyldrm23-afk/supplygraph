@@ -1,0 +1,125 @@
+{
+  "environment": "fresh disposable Compose project; no existing graph volume",
+  "passed": true,
+  "health": {
+    "status": "ok",
+    "database": "connected",
+    "gds": "2.13.7",
+    "llm": "qwen2.5:1.5b"
+  },
+  "overview": {
+    "organizations": 13,
+    "products": 118,
+    "lanes": 962,
+    "orders": 6000,
+    "daily_demand": 340.8,
+    "baseline_delivered": 340.8,
+    "baseline_service_level": 100.0,
+    "metadata": {
+      "citation": "Constante, Silva & Pereira (2019), DataCo, Mendeley Data V5, doi:10.17632/8gx2fvg2k6.5",
+      "license": "CC BY 4.0",
+      "sha256": "fa6d022ed437155e1a2f0378710602848703c8a7f203f7ff5d77805bf8480aa6",
+      "source_rows": 180519,
+      "unique_orders": 65752,
+      "unique_products": 118,
+      "unique_categories": 51,
+      "duplicate_item_ids": 0,
+      "period_start": "2015-01-01T00:00:00",
+      "period_end": "2018-01-31T23:38:00",
+      "period_days": 1127,
+      "source_missing_values": {
+        "Order Zipcode": 155679,
+        "Product Description": 180519,
+        "Customer Zipcode": 3,
+        "Customer Lname": 8
+      },
+      "selected_orders": 6000,
+      "sampling": "6000 evenly spaced order indices across the full chronological range",
+      "observed_fields": [
+        "product IDs/names/prices/categories",
+        "historical quantities",
+        "anonymous order IDs/dates",
+        "shipping durations/modes",
+        "markets",
+        "late label"
+      ],
+      "assumed_fields": [
+        "all organizations",
+        "all lanes",
+        "capacities",
+        "lead times",
+        "backup contracts",
+        "retailer assignment",
+        "equal retailer demand split"
+      ],
+      "excluded_fields": [
+        "customer names",
+        "emails",
+        "passwords",
+        "addresses",
+        "customer IDs",
+        "customer coordinates",
+        "customer postcodes"
+      ],
+      "country_line_counts_top10": [
+        [
+          "Estados Unidos",
+          24840
+        ],
+        [
+          "Francia",
+          13222
+        ],
+        [
+          "M\u00e9xico",
+          13172
+        ],
+        [
+          "Alemania",
+          9564
+        ],
+        [
+          "Australia",
+          8497
+        ],
+        [
+          "Brasil",
+          7987
+        ],
+        [
+          "Reino Unido",
+          7302
+        ],
+        [
+          "China",
+          5758
+        ],
+        [
+          "Italia",
+          4989
+        ],
+        [
+          "India",
+          4783
+        ]
+      ],
+      "demand_method": "historical units divided by the complete 1127-day observation window; not a forecast",
+      "warning": "DataCo does not supply multi-tier supplier topology. Scenario graph is fictional."
+    }
+  },
+  "containers": [
+    {
+      "service": "api",
+      "health": "healthy"
+    },
+    {
+      "service": "neo4j",
+      "health": "healthy"
+    },
+    {
+      "service": "web",
+      "health": "healthy"
+    }
+  ],
+  "integration_output": "..........                                                               [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/testclient.py:37\n  /Users/tanyildirim/Desktop/Knowledge Graph Project/.venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n10 passed, 95 deselected, 1 warning in 1.78s\n"
+}

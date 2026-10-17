@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-18",
+  "actual_viewport": {
+    "documentWidth": 376,
+    "height": 670,
+    "width": 376
+  },
+  "observed_checks": [
+    "Baseline dashboard loaded from real Neo4j API",
+    "Full supplier outage displayed 40 affected products",
+    "Reserve activation improved service level",
+    "Product provenance and historical-versus-modeled ETA loaded",
+    "GDS betweenness and WCC returned real results",
+    "Mobile overflow corrected; graph scrolls within its own panel",
+    "SVG facilities exposed as keyboard-accessible buttons",
+    "Turkish supplier-failure question returned a validated impact plan"
+  ],
+  "turkish_question": "Atlas Textiles (SUP-01) devre dışı kalırsa hangi ürünler etkilenir?",
+  "assistant_answer": "Guardrails passed · actual graph evidence\n40 products lose delivery capacity; 112.2 units/day of demand are unmet. Backup contracts can restore 60.3 units/day. These are scenario estimates based on assumed supply lanes.\n\nObserved: DataCo products and historical demand. Assumed: scenario network and all supplier relationships.\n\nExecuted Cypher & parameters\nMATCH p=(s:Organization {id: $supplier_id})-[:FLOW*1..6]->(o:Organization) WHERE length(p) <= $depth WITH o, min(length(p)) AS hops RETURN o.id AS id, o.name AS name, o.kind AS kind, hops ORDER BY hops, id LIMIT $limit\n\n{\n  \"supplier_id\": \"SUP-01\",\n  \"depth\": 6,\n  \"limit\": 30\n}\nGraph records (6)"
+}

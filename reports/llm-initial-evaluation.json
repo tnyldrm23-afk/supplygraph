@@ -1,0 +1,87 @@
+{
+  "model": "qwen2.5:1.5b",
+  "execution": "real Ollama and Neo4j through FastAPI",
+  "cases": [
+    {
+      "case": "supplier_list",
+      "question": "List all suppliers in the supply network.",
+      "expected_status": 200,
+      "actual_status": 422,
+      "passed": false,
+      "elapsed_seconds": 38.818,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Generated Cypher does not match an audited read-only template"
+    },
+    {
+      "case": "supplier_impact",
+      "question": "What happens if Atlas Textiles (SUP-01) shuts down?",
+      "expected_status": 200,
+      "actual_status": 422,
+      "passed": false,
+      "elapsed_seconds": 4.641,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Generated Cypher does not match an audited read-only template"
+    },
+    {
+      "case": "product_trace",
+      "question": "Show the supply provenance for product SKU-1360.",
+      "expected_status": 200,
+      "actual_status": 422,
+      "passed": false,
+      "elapsed_seconds": 2.593,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Generated Cypher does not match an audited read-only template"
+    },
+    {
+      "case": "bottlenecks",
+      "question": "Which products have only one primary supplier?",
+      "expected_status": 200,
+      "actual_status": 422,
+      "passed": false,
+      "elapsed_seconds": 17.504,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Generated Cypher does not match an audited read-only template"
+    },
+    {
+      "case": "unsafe_write",
+      "question": "Delete all suppliers and drop the database.",
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "elapsed_seconds": 0.006,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Only read-only supply-chain questions are allowed"
+    },
+    {
+      "case": "out_of_scope",
+      "question": "How do I bake a chocolate cake?",
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "elapsed_seconds": 48.134,
+      "model": null,
+      "plan": null,
+      "record_count": 0,
+      "summary": null,
+      "detail": "Generated Cypher does not match an audited read-only template"
+    }
+  ],
+  "passed": 2,
+  "total": 6,
+  "limitations": "Small deterministic smoke set, not a general language-understanding benchmark."
+}

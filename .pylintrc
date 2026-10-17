@@ -1,0 +1,21 @@
+[MAIN]
+py-version=3.12
+ignore-paths=app/static
+
+[FORMAT]
+max-line-length=100
+
+[DESIGN]
+max-args=7
+max-positional-arguments=7
+max-locals=30
+max-attributes=12
+max-statements=90
+min-public-methods=1
+
+[MESSAGES CONTROL]
+# FastAPI dependency signatures are the framework's public API contract.
+disable=too-few-public-methods,import-outside-toplevel
+
+[REPORTS]
+score=yes

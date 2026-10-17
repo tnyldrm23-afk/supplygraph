@@ -1,0 +1,22 @@
+[project]
+name = "supplygraph"
+version = "1.0.0"
+requires-python = ">=3.12,<3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: requires running Docker Neo4j/GDS and API"]
+addopts = "--strict-markers"
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+relative_files = true
+
+[tool.coverage.report]
+fail_under = 60
+show_missing = true
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]

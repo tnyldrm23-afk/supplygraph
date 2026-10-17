@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660">
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="none" stroke="#8b9981"/></marker></defs>
+<rect width="100%" height="100%" fill="#fafbf8"/>
+<text x="35" y="42" font-family="sans-serif" font-size="24" fill="#19352a">System architecture — four local Docker Compose services</text>
+<path d="M290,182.5 L420,192.5" fill="none" stroke="#94a18b" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="355.0" y="179.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#5b7051">HTTP /api/*</text>
+<path d="M675,192.5 L810,192.5" fill="none" stroke="#94a18b" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="742.5" y="184.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#5b7051">Bolt / bounded Cypher</text>
+<path d="M547.5,265 L547.5,410" fill="none" stroke="#94a18b" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="547.5" y="329.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#5b7051">JSON query plan</text>
+<path d="M290,467.5 L420,192.5" fill="none" stroke="#94a18b" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="355.0" y="322.0" font-family="monospace" font-size="10" text-anchor="middle" fill="#5b7051">idempotent ingestion</text>
+<path d="M930.0,410 L930.0,265" fill="none" stroke="#94a18b" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="930.0" y="329.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#5b7051">scores + PROFILE</text>
+<rect x="50" y="120" width="240" height="125" rx="9" fill="#edf3ef" stroke="#456e5a"/>
+<text x="66" y="147" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">Nginx + static UI</text>
+<text x="66" y="169" font-family="monospace" font-size="10" fill="#718466">127.0.0.1:8080</text>
+<text x="66" y="185" font-family="monospace" font-size="10" fill="#718466">HTML / CSS / SVG / JS</text>
+<text x="66" y="201" font-family="monospace" font-size="10" fill="#718466">reverse proxy + CSP</text>
+<rect x="420" y="120" width="255" height="145" rx="9" fill="#edf3ef" stroke="#456e5a"/>
+<text x="436" y="147" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">FastAPI</text>
+<text x="436" y="169" font-family="monospace" font-size="10" fill="#718466">127.0.0.1:8000 /docs</text>
+<text x="436" y="185" font-family="monospace" font-size="10" fill="#718466">Pydantic + exact-template guard</text>
+<text x="436" y="201" font-family="monospace" font-size="10" fill="#718466">immutable flow solver</text>
+<text x="436" y="217" font-family="monospace" font-size="10" fill="#718466">query timeout + concurrency cap</text>
+<rect x="810" y="120" width="240" height="145" rx="9" fill="#edf3ef" stroke="#456e5a"/>
+<text x="826" y="147" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">Neo4j 5.26 + GDS</text>
+<text x="826" y="169" font-family="monospace" font-size="10" fill="#718466">127.0.0.1:7474 / :7687</text>
+<text x="826" y="185" font-family="monospace" font-size="10" fill="#718466">constraints + indexes</text>
+<text x="826" y="201" font-family="monospace" font-size="10" fill="#718466">FLOW projection</text>
+<text x="826" y="217" font-family="monospace" font-size="10" fill="#718466">betweenness / WCC</text>
+<rect x="50" y="410" width="240" height="115" rx="9" fill="#eff5e9" stroke="#6f8b56"/>
+<text x="66" y="437" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">Sanitized DataCo v5</text>
+<text x="66" y="459" font-family="monospace" font-size="10" fill="#718466">118 products · 6000 orders</text>
+<text x="66" y="475" font-family="monospace" font-size="10" fill="#718466">source hash verified</text>
+<text x="66" y="491" font-family="monospace" font-size="10" fill="#718466">CC BY 4.0 attribution</text>
+<rect x="420" y="410" width="255" height="115" rx="9" fill="#edf3ef" stroke="#456e5a"/>
+<text x="436" y="437" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">Ollama / Qwen</text>
+<text x="436" y="459" font-family="monospace" font-size="10" fill="#718466">127.0.0.1:11434</text>
+<text x="436" y="475" font-family="monospace" font-size="10" fill="#718466">qwen2.5:1.5b</text>
+<text x="436" y="491" font-family="monospace" font-size="10" fill="#718466">real local model generation</text>
+<rect x="810" y="410" width="240" height="115" rx="9" fill="#f3f4f1" stroke="#8b9981"/>
+<text x="826" y="437" font-family="sans-serif" font-size="15" font-weight="600" fill="#254634">Offline ML + benchmarks</text>
+<text x="826" y="459" font-family="monospace" font-size="10" fill="#718466">temporal node classification</text>
+<text x="826" y="475" font-family="monospace" font-size="10" fill="#718466">PROFILE + 30-run latency</text>
+<text x="826" y="491" font-family="monospace" font-size="10" fill="#718466">reports + demo.ipynb</text>
+<text x="35" y="635" font-family="sans-serif" font-size="11" fill="#829475">SupplyGraph · Green: observed / service · Orange: assumed scenario · Tan YILDIRIM, B00822334</text></svg>

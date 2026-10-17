@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+data/raw/*
+!data/raw/.gitkeep
+reports/*.log
+*.egg-info/
+
+# Course assignment archived locally; link and evidence matrix are public.
+docs/instructor-spec.md
+
+.cache/
+.ipynb_checkpoints/

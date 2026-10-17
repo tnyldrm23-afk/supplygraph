@@ -1,0 +1,11 @@
+*
+!requirements.txt
+!requirements-lock.txt
+!app/
+!app/**
+!data/
+!data/processed/
+!data/processed/**
+
+!LICENSE
+!DATA_LICENSE.md
