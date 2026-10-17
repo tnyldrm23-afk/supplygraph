@@ -1,0 +1,107 @@
+{
+  "image": "ghcr.io/tnyldrm23-afk/supplygraph:latest",
+  "digest": "sha256:dda7bbed213c87586cbb904788635d6eb606b850e8e50a8186c54ce0d6dc15cd",
+  "anonymous_pull_verified": true,
+  "platforms": [
+    "linux/amd64",
+    "linux/arm64"
+  ],
+  "published_image_runtime_verified": true,
+  "health": {
+    "status": "ok",
+    "database": "connected",
+    "gds": "2.13.7",
+    "llm": "qwen2.5:1.5b"
+  },
+  "product_count": 118,
+  "outage_affected_products": 40,
+  "gds_results": [
+    {
+      "id": "DST-01",
+      "name": "Rotterdam Gateway",
+      "kind": "distributor",
+      "score": 9.0
+    },
+    {
+      "id": "DST-02",
+      "name": "Hamburg Hub",
+      "kind": "distributor",
+      "score": 9.0
+    },
+    {
+      "id": "MFG-01",
+      "name": "Porto Works",
+      "kind": "manufacturer",
+      "score": 5.0
+    },
+    {
+      "id": "MFG-02",
+      "name": "Istanbul Assembly",
+      "kind": "manufacturer",
+      "score": 5.0
+    },
+    {
+      "id": "MFG-03",
+      "name": "Saigon Works",
+      "kind": "manufacturer",
+      "score": 5.0
+    },
+    {
+      "id": "DST-03",
+      "name": "Atlantic Distribution",
+      "kind": "distributor",
+      "score": 0.0
+    },
+    {
+      "id": "RET-01",
+      "name": "Paris Retail",
+      "kind": "retailer",
+      "score": 0.0
+    },
+    {
+      "id": "RET-02",
+      "name": "London Retail",
+      "kind": "retailer",
+      "score": 0.0
+    },
+    {
+      "id": "RET-03",
+      "name": "New York Retail",
+      "kind": "retailer",
+      "score": 0.0
+    },
+    {
+      "id": "SUP-01",
+      "name": "Atlas Textiles",
+      "kind": "supplier",
+      "score": 0.0
+    },
+    {
+      "id": "SUP-02",
+      "name": "Bosphorus Materials",
+      "kind": "supplier",
+      "score": 0.0
+    },
+    {
+      "id": "SUP-03",
+      "name": "Mekong Components",
+      "kind": "supplier",
+      "score": 0.0
+    },
+    {
+      "id": "SUP-04",
+      "name": "Lusitania Reserve",
+      "kind": "supplier",
+      "score": 0.0
+    }
+  ],
+  "versioned_release": {
+    "tag": "v1.0.0",
+    "image": "ghcr.io/tnyldrm23-afk/supplygraph:1.0.0",
+    "digest": "sha256:dff56053e722cab0d1ab281f0c6a1dde42ecbdc9ed60506b0eedeedd48b9a087",
+    "anonymous_pull_verified": true,
+    "runtime_verified": true,
+    "real_integration_tests_passed": 10,
+    "workflow": "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39076581710"
+  }
+}

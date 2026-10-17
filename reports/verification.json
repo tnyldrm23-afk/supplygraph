@@ -76,10 +76,10 @@
   "coverage_percent": 84.69,
   "all_local_gates_passed": true,
   "external_gates": {
-    "github_code_published": false,
-    "remote_ci_verified": false,
-    "public_registry_anonymous_pull_verified": false,
-    "merged_pr_verified": false
+    "github_code_published": true,
+    "remote_ci_verified": true,
+    "public_registry_anonymous_pull_verified": true,
+    "merged_pr_verified": true
   },
   "fresh_start_verified": true,
   "browser_qa": "reports/browser-qa.json",
@@ -93,5 +93,23 @@
     "total": 6,
     "turkish_ui_question_also_passed": true,
     "report": "reports/llm-evaluation.json"
-  }
+  },
+  "make_docker_run_verified": true,
+  "github": {
+    "repository": "https://github.com/tnyldrm23-afk/supplygraph",
+    "merged_pr": "https://github.com/tnyldrm23-afk/supplygraph/pull/1",
+    "source_commit": "5ca22493815e0a9c079bede74da536b26ac91ff9",
+    "verified_ci_commit": "e89e330c14dcbd417e589868a50707e3fd76826b",
+    "ci_runs": [
+      "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39075699089",
+      "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39075738329",
+      "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39075935717",
+      "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39075935782",
+      "https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39076581710"
+    ],
+    "publication_method": "authenticated GitHub browser; no additional CLI account grant",
+    "release": "https://github.com/tnyldrm23-afk/supplygraph/releases/tag/v1.0.0",
+    "published_files_at_implementation_merge": 84
+  },
+  "registry": "reports/registry-verification.json"
 }
