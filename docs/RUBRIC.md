@@ -41,7 +41,7 @@ No self-assigned grade is claimed. Published checks and instructor judgment rema
 | Make usage documented | 1 | README and make help |
 | Unit/API/Neo4j tests | 3 | tests/test_simulation.py, test_api.py, test_agent.py, test_integration.py |
 | Container health tests | 2 | Four Compose health checks + real API/database connectivity |
-| Cypher tests | 2 | Five actual graph queries in integration suite; unit contracts explicitly use labeled doubles |
+| Cypher tests | 2 | Five actual graph queries: make test INTEGRATION=1 (running stack required); unit contracts explicitly use labeled doubles |
 | >=60% coverage | 2 | make test fail-under=60; reports/coverage.xml and final verification |
 | All tests pass | 1 | Final local results in reports/verification.json; remote CI tracked separately |
 | Lint workflow | 1 | .github/workflows/quality.yml |
