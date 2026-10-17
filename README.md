@@ -148,6 +148,7 @@ make help
 make lint                # pylint threshold >= 9.5
 make test                # unit/API/adversarial tests; coverage threshold >= 60%
 make test-integration    # actual Neo4j, Cypher, GDS and running API
+make test INTEGRATION=1  # unit + real Cypher checks through make test
 make ml                  # temporal classifier report
 make benchmark           # real PROFILE plans and latency evidence
 make demo                # execute demo.ipynb against running services + model
