@@ -118,7 +118,7 @@ diagram(
             230,
             115,
             "assumed",
-            "id UNIQUE · name · kind\nSupplier / manufacturer /\ndistributor / retailer",
+            "id UNIQUE · name · kind\nSupplier / manufacturer /\ndistributor / retailer\nFLOW -> Organization (derived)",
         ),
         (
             "lane",
