@@ -1,0 +1,91 @@
+{
+  "citation": "Constante, Silva & Pereira (2019), DataCo, Mendeley Data V5, doi:10.17632/8gx2fvg2k6.5",
+  "license": "CC BY 4.0",
+  "sha256": "fa6d022ed437155e1a2f0378710602848703c8a7f203f7ff5d77805bf8480aa6",
+  "source_rows": 180519,
+  "unique_orders": 65752,
+  "unique_products": 118,
+  "unique_categories": 51,
+  "duplicate_item_ids": 0,
+  "period_start": "2015-01-01T00:00:00",
+  "period_end": "2018-01-31T23:38:00",
+  "period_days": 1127,
+  "source_missing_values": {
+    "Order Zipcode": 155679,
+    "Product Description": 180519,
+    "Customer Zipcode": 3,
+    "Customer Lname": 8
+  },
+  "selected_orders": 6000,
+  "sampling": "6000 evenly spaced order indices across the full chronological range",
+  "observed_fields": [
+    "product IDs/names/prices/categories",
+    "historical quantities",
+    "anonymous order IDs/dates",
+    "shipping durations/modes",
+    "markets",
+    "late label"
+  ],
+  "assumed_fields": [
+    "all organizations",
+    "all lanes",
+    "capacities",
+    "lead times",
+    "backup contracts",
+    "retailer assignment",
+    "equal retailer demand split"
+  ],
+  "excluded_fields": [
+    "customer names",
+    "emails",
+    "passwords",
+    "addresses",
+    "customer IDs",
+    "customer coordinates",
+    "customer postcodes"
+  ],
+  "country_line_counts_top10": [
+    [
+      "Estados Unidos",
+      24840
+    ],
+    [
+      "Francia",
+      13222
+    ],
+    [
+      "M\u00e9xico",
+      13172
+    ],
+    [
+      "Alemania",
+      9564
+    ],
+    [
+      "Australia",
+      8497
+    ],
+    [
+      "Brasil",
+      7987
+    ],
+    [
+      "Reino Unido",
+      7302
+    ],
+    [
+      "China",
+      5758
+    ],
+    [
+      "Italia",
+      4989
+    ],
+    [
+      "India",
+      4783
+    ]
+  ],
+  "demand_method": "historical units divided by the complete 1127-day observation window; not a forecast",
+  "warning": "DataCo does not supply multi-tier supplier topology. Scenario graph is fictional."
+}
