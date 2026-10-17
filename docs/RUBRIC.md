@@ -9,7 +9,7 @@ No self-assigned grade is claimed. Published checks and instructor judgment rema
 | Compose >=3 services | 2 | Four services in docker-compose.yml: Neo4j, API, Nginx, Ollama |
 | Dockerfiles / official images | 2 | Non-root API Dockerfile; official supporting images |
 | Environment examples / no secrets | 2 | .env.example, random local setup, Git/Docker ignore rules |
-| Public registry image | 2 | Container workflow to GHCR; release evidence must verify public anonymous pull |
+| Public registry image | 2 | Public multi-architecture GHCR image; reports/registry-verification.json proves anonymous pull and real-service smoke test |
 | Clean Compose startup | 1 | make docker-run with readiness wait; container health records |
 | >=3 labels / relation types | 3 | Organization, Lane, Product, Order, Category, Location; eight domain/derived relation types |
 | >=2 constraints | 2 | Six unique-ID constraints in app/database.py |
@@ -47,13 +47,13 @@ No self-assigned grade is claimed. Published checks and instructor judgment rema
 | Lint workflow | 1 | .github/workflows/quality.yml |
 | Test / coverage workflow | 1 | Unit/API job + real Docker integration job; coverage artifact |
 | README badges | 1 | Quality, container and labeled local-coverage badges |
-| Code reviews, >=2 comments per PR | 1 | Solo self-review must be labeled; no peer review can be fabricated |
+| Code reviews, >=2 comments per PR | 1 | Two constructive, explicitly labeled solo self-review comments on merged PR #1; docs/SELF_REVIEW.md |
 | Reverse proxy or auth | 3 | Nginx reverse proxy, headers, CSP and loopback binding |
 | EXPLAIN/PROFILE | 2 | Captured PROFILE operators show scan → unique seek |
 | Branch workflow | 2 | main + feat/supplygraph; substantial PR and recorded self-review |
 | .gitignore | 1 | Raw files, .env, virtualenv, caches excluded |
 | Balanced team contributions | 3 | Solo author; team distribution requirement needs instructor interpretation, not fake collaborators |
-| >=1 substantial merged PR/member | 3 | One real author; release PR required and linked once merged |
+| >=1 substantial merged PR/member | 3 | One real author; substantial merged PR #1: https://github.com/tnyldrm23-afk/supplygraph/pull/1 |
 | Clear commits | 1 | Conventional prefixes and milestone commits |
 
 ## Level 2-specific choices
@@ -65,6 +65,6 @@ experiment is included even though the core project remains Level 2.
 
 ## Honest exclusions and external gates
 No team members or peer reviews are invented for this solo submission. Registry
-publication, remote CI and PR links must be observed, not inferred from workflow
-configuration. The live model evaluation separately records initial failed design
+publication and anonymous download, remote quality/container CI, merged PR #1 and
+release v1.0.0 were observed; links are recorded in reports/verification.json. The live model evaluation separately records initial failed design
 iterations and final outcomes. Check STATUS.md and verification.json for current gates.
