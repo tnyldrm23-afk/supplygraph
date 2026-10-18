@@ -466,5 +466,36 @@
       "Fixed during QA: results column overflowed at 375 px and 768 px; constrained with minmax(0, 1fr)"
     ],
     "screenshots": "docs/screenshots/*.jpg recaptured from the running stack with headless Chrome"
+  },
+  "map_redesign": {
+    "checked_at": "2026-10-18",
+    "interface_version": "1.3",
+    "responsive_checks": {
+      "widths": [
+        320,
+        375,
+        768,
+        1024,
+        1280,
+        1440
+      ],
+      "views": [
+        "overview (after run)",
+        "trace",
+        "analytics",
+        "assistant"
+      ],
+      "maxDocumentWidth": "viewport width (+1 px rounding at 320)",
+      "visibleError": false,
+      "jsExceptions": 0
+    },
+    "observed_checks": [
+      "Overview world map places 13 assumed facilities at their cities; primary lanes animate",
+      "Atlas Textiles full outage: Porto pulses red, ripple reaches 6 downstream facilities in hop order; readout counts to 67.1% / 40 / 112.2 / 60.3",
+      "Products map highlights the 9 facilities in 7 countries carrying SKU-365; backup lanes dashed",
+      "Analysis map sizes facilities by real GDS betweenness (Rotterdam and Hamburg 9, manufacturers 5)",
+      "Phones: map moves above the controls and becomes a swipeable 760 px canvas centred on Europe",
+      "prefers-reduced-motion disables flow, ripple, counters and entrance animations"
+    ]
   }
 }

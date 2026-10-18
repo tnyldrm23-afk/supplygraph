@@ -25,3 +25,8 @@ SHA-256 of original CSV:
 Raw files are downloaded locally, ignored by Git and excluded from Docker images.
 The source dictionary is used for interpretation and is downloadable with the
 reproducible source-data script. No rights over original DataCo content are claimed.
+
+**Map backdrop:** `app/static/land.svg` is projected from Natural Earth 1:50m land
+(public domain, https://www.naturalearthdata.com/) via the world-atlas package
+(ISC license) with `scripts/create_land_map.py`. City placements on the map are
+the scenario's assumed facility locations.

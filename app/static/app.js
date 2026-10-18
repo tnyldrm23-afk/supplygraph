@@ -118,6 +118,8 @@ function renderGraph() {
   });
   renderFacilityList(failures, exposed, selectedId);
   syncGraphView();
+  renderOverviewMap(state.animateRipple);
+  state.animateRipple = false;
 }
 function renderFacilityList(failures, exposed, selectedId) {
   const list = $('network-list');
@@ -144,6 +146,112 @@ function renderFacilityList(failures, exposed, selectedId) {
   });
 }
 
+/* World map (projection matches scripts that generated land.svg) */
+const GEO = { width: 1060, height: 359, lon0: -84, lon1: 124, latTop: 60 };
+const GEO_K = GEO.width / ((GEO.lon1 - GEO.lon0) * Math.PI / 180);
+const merc = lat => Math.log(Math.tan(Math.PI / 4 + Math.max(-80, Math.min(84, lat)) * Math.PI / 360));
+const GEO_Y0 = merc(GEO.latTop);
+const project = (lon, lat) => [GEO_K * (lon - GEO.lon0) * Math.PI / 180, GEO_K * (GEO_Y0 - merc(lat))];
+// [text-anchor, dx, dy] chosen by hand so the crowded European labels never overlap
+const cityLabel = {'LOC-PT': ['end', -20, 4], 'LOC-GB': ['end', -10, 0], 'LOC-NL': ['start', 9, 13], 'LOC-DE': ['start', 10, -3], 'LOC-FR': ['start', 9, 8], 'LOC-TR': ['start', 15, 4], 'LOC-VN': ['end', -15, 4], 'LOC-US': ['start', 15, 4]};
+const geoColor = {supplier: 'var(--geo-supplier)', manufacturer: 'var(--geo-manufacturer)', distributor: 'var(--geo-distributor)', retailer: 'var(--geo-retailer)'};
+const stageOrder = Object.keys(kindStyle);
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function geoPositions() {
+  const positions = {};
+  state.graph.locations.forEach(location => {
+    const [x, y] = project(location.longitude, location.latitude);
+    const here = state.organizations.filter(o => o.location_id === location.id)
+      .sort((a, b) => stageOrder.indexOf(a.kind) - stageOrder.indexOf(b.kind));
+    here.forEach((o, i) => { positions[o.id] = [x + (i - (here.length - 1) / 2) * 10, y]; });
+  });
+  return positions;
+}
+function arcPath([x1, y1], [x2, y2]) {
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+  if (len < 14) return `M${x1},${y1} L${x2},${y2}`;
+  let nx = -dy / len, ny = dx / len;
+  if (ny > 0) { nx = -nx; ny = -ny; }
+  const lift = Math.min(90, len * .22);
+  return `M${x1},${y1} Q${(x1 + x2) / 2 + nx * lift},${(y1 + y2) / 2 + ny * lift} ${x2},${y2}`;
+}
+/* options: edges [{origin, destination, backup, cls, flow, delay}], node(id) -> {cls, delay, radius, label}, selected, animate */
+function drawGeo(svg, options) {
+  if (!state.graph) return;
+  svg.replaceChildren();
+  const box = svg.parentElement;
+  if (box.scrollWidth > box.clientWidth && !box.dataset.centered) { box.scrollLeft = (box.scrollWidth - box.clientWidth) * .42; box.dataset.centered = '1'; }
+  svg.classList.toggle('animate', Boolean(options.animate) && !reducedMotion.matches);
+  svg.append(svgElement('image', {href: '/land.svg', x: 0, y: 0, width: GEO.width, height: GEO.height, class: 'geo-land'}));
+  const pos = geoPositions();
+  options.edges.forEach(edge => {
+    const a = pos[edge.origin], b = pos[edge.destination];
+    if (!a || !b) return;
+    const d = arcPath(a, b), style = `--d:${edge.delay || 0}ms`;
+    const lane = svgElement('path', {d, class: `geo-lane ${edge.backup ? 'backup ' : ''}${edge.cls || ''}`, style});
+    lane.append(svgElement('title', {}, `${orgName(edge.origin)} → ${orgName(edge.destination)}${edge.backup ? ' (backup lane)' : ''}`));
+    svg.append(lane);
+    if (edge.flow) svg.append(svgElement('path', {d, class: `geo-flow ${edge.backup ? 'backup ' : ''}${edge.cls || ''}`, style}));
+  });
+  state.graph.nodes.forEach(node => {
+    const p = pos[node.id]; if (!p) return;
+    const info = options.node ? options.node(node.id) : {};
+    const r = info.radius || 4.2;
+    const g = svgElement('g', {class: `geo-node ${info.cls || ''}`, transform: `translate(${p[0]},${p[1]})`, style: `--d:${info.delay || 0}ms`});
+    g.append(svgElement('title', {}, `${node.name} · ${node.kind}${info.note ? ' · ' + info.note : ''}`));
+    g.append(svgElement('circle', {r: r + 6, class: 'halo', fill: geoColor[node.kind]}));
+    if (info.cls?.includes('failed')) g.append(svgElement('circle', {r: r + 2, class: 'geo-pulse'}));
+    g.append(svgElement('circle', {r, class: 'core', fill: geoColor[node.kind]}));
+    if (options.selected === node.id) g.append(svgElement('circle', {r: r + 4, class: 'select-ring'}));
+    if (info.label) g.append(svgElement('text', {x: 0, y: -r - 6, 'text-anchor': 'middle', class: 'geo-score'}, info.label));
+    if (options.onSelect) g.addEventListener('click', () => options.onSelect(node.id));
+    svg.append(g);
+  });
+  state.graph.locations.forEach(location => {
+    const [x, y] = project(location.longitude, location.latitude);
+    const [anchor, dx, dy] = cityLabel[location.id] || ['start', 10, 4];
+    const push = options.labelPush?.(location.id) || 0;
+    svg.append(svgElement('text', {x: x + dx + Math.sign(dx) * push, y: y + dy, 'text-anchor': anchor, class: 'geo-city'}, location.name));
+  });
+}
+function renderOverviewMap(animate = false) {
+  const { failures, exposed, active, backups } = scenarioSets();
+  const hops = Object.fromEntries((state.scenario?.exposed_organizations || []).map(o => [o.id, o.hops]));
+  const step = 420;
+  drawGeo($('geo-map'), {
+    animate,
+    selected: $('supplier-select').value,
+    onSelect: selectFacility,
+    edges: state.graph.edges.map(edge => {
+      let cls = '', flow = !edge.backup || backups;
+      if (active) {
+        if (failures.has(edge.origin) || failures.has(edge.destination)) { cls = 'failed'; flow = false; }
+        else if (exposed.has(edge.origin) && !edge.backup) cls = 'affected';
+        else if (!edge.backup) cls = 'faded';
+      }
+      return {...edge, cls, flow, delay: ((hops[edge.origin] ?? 0) + .5) * step};
+    }),
+    node: id => {
+      if (!active) return {};
+      if (failures.has(id)) return {cls: 'failed', delay: 0, note: 'disrupted'};
+      if (exposed.has(id)) return {cls: 'affected', delay: (hops[id] ?? 1) * step, note: `downstream, ${hops[id]} hop${hops[id] === 1 ? '' : 's'} away`};
+      return {};
+    }
+  });
+}
+function animateNumber(id, value, digits = 1) {
+  const el = $(id), from = Number(el.dataset.value || 0);
+  el.dataset.value = value;
+  if (reducedMotion.matches || from === value) { el.textContent = fmt(value, digits); return; }
+  const start = performance.now(), duration = 800;
+  const tick = now => {
+    const t = Math.min(1, (now - start) / duration), eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = fmt(from + (value - from) * eased, digits);
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 /* Scenario */
 function updateServiceTrack(value) {
   $('service-spark').style.width = Math.max(0, Math.min(100, value)) + '%';
@@ -157,9 +265,10 @@ function facilityInfo() {
 }
 function baseline() {
   state.scenario = null; state.allProducts = false;
-  $('metric-service').textContent = fmt(state.overview.baseline_service_level);
+  animateNumber('metric-service', state.overview.baseline_service_level);
   updateServiceTrack(state.overview.baseline_service_level);
-  $('metric-products').textContent = '0'; $('metric-loss').textContent = '0'; $('metric-recovery').textContent = '0';
+  animateNumber('metric-products', 0, 0); animateNumber('metric-loss', 0); animateNumber('metric-recovery', 0);
+  $('stage-caption').textContent = 'Baseline — goods moving on every primary lane'; $('stage-caption').className = '';
   $('service-change').textContent = 'Baseline — no disruption'; $('service-change').className = 'neutral';
   $('product-change').textContent = 'No disruption applied'; $('product-change').className = 'neutral';
   $('loss-change').textContent = `All ${fmt(state.overview.daily_demand)} units/day delivered`;
@@ -188,10 +297,13 @@ async function runScenario(event) {
 function renderScenario() {
   const s = state.scenario, t = s.totals;
   const name = orgName(s.scenario.supplier_ids[0]), pct = Math.round(s.scenario.reduction * 100);
-  $('metric-service').textContent = fmt(t.service_level); updateServiceTrack(t.service_level);
-  $('metric-products').textContent = fmt(s.affected_products, 0);
+  animateNumber('metric-service', t.service_level); updateServiceTrack(t.service_level);
+  animateNumber('metric-products', s.affected_products, 0);
   $('metric-product-total').textContent = '/ ' + s.products.length;
-  $('metric-loss').textContent = fmt(t.unmet_demand); $('metric-recovery').textContent = fmt(t.restored_with_backups);
+  animateNumber('metric-loss', t.unmet_demand); animateNumber('metric-recovery', t.restored_with_backups);
+  const downstream = s.exposed_organizations.filter(o => o.hops > 0).length;
+  $('stage-caption').textContent = pct === 0 ? `${name} at full capacity — nothing changes` : `${name} loses ${pct}% of capacity — the shortfall reaches ${plural(downstream, 'facility', 'facilities')} downstream`;
+  $('stage-caption').className = pct > 0 ? 'alert' : '';
   const delta = t.service_level - t.baseline_service_level;
   $('service-change').textContent = delta === 0 ? 'Unchanged from baseline' : `${delta > 0 ? '+' : '−'}${fmt(Math.abs(delta))} points vs baseline`;
   $('service-change').className = delta < 0 ? 'negative' : 'positive';
@@ -204,7 +316,7 @@ function renderScenario() {
   const result = $('scenario-result');
   result.hidden = false;
   result.className = 'scenario-result' + (s.affected_products === 0 ? ' recovered' : '');
-  result.innerHTML = `<p class="result-title">${esc(name)} loses ${pct}% of capacity</p><p>${plural(s.affected_products, 'product')} affected · ${fmt(t.unmet_demand)} units/day unmet. ${plural(s.exposed_organizations.length, 'facility', 'facilities')} downstream.${s.traversal_truncated ? ' Exposure depth limit reached.' : ''}</p><a href="#product-impact">See product impact ↓</a>`;
+  result.innerHTML = `<p class="result-title">${esc(name)} loses ${pct}% of capacity</p><p>${plural(s.affected_products, 'product')} affected · ${fmt(t.unmet_demand)} units/day unmet. ${plural(s.exposed_organizations.filter(o => o.hops > 0).length, 'facility', 'facilities')} downstream.${s.traversal_truncated ? ' Exposure depth limit reached.' : ''}</p><a href="#product-impact">See product impact ↓</a>`;
   const recovery = Math.min(100, 100 * (t.scenario_delivered + t.restored_with_backups) / t.demand);
   $('bar-scenario').style.width = t.service_level + '%'; $('bar-scenario-value').textContent = fmt(t.service_level, 0) + '%';
   $('bar-recovery').style.width = recovery + '%'; $('bar-recovery-value').textContent = fmt(recovery, 0) + '%';
@@ -213,12 +325,17 @@ function renderScenario() {
     ? 'Reserve contracts recover part of the shortfall, not all of it. Compare both runs before choosing a mitigation.'
     : s.scenario.activate_backups ? 'Reserve contracts are already on. The remaining shortage needs new capacity or another route.'
       : 'No reserve contract helps here. Check the affected products for single-source dependencies.';
+  state.animateRipple = true;
   renderImpactTable(); renderGraph();
+}
+function keptBar(share) {
+  const value = Math.max(0, Math.min(100, share));
+  return `<div class="kept${value === 0 ? ' zero' : ''}" aria-label="${fmt(value, 0)}% still delivered"><b><i style="width:${value}%"></i></b><span>${fmt(value, 0)}%</span></div>`;
 }
 function renderImpactTable() {
   const rows = state.scenario?.products || [];
   const selected = state.allProducts ? rows : rows.slice(0, 8);
-  $('impact-table').innerHTML = selected.map(p => `<tr><td><div class="product-name">${esc(p.name)}</div><small>${esc(p.sku)}</small></td><td class="num">${fmt(p.baseline_delivered)}</td><td class="num">${fmt(p.scenario_delivered)}</td><td class="num ${p.lost_units > 0 ? 'negative' : 'neutral'}">${p.lost_units > 0 ? '−' + fmt(p.lost_units) : '0'}</td><td><span class="badge ${esc(p.status)}">${p.status === 'disrupted' ? 'Disrupted' : 'Stable'}</span></td></tr>`).join('')
+  $('impact-table').innerHTML = selected.map(p => `<tr><td><div class="product-name">${esc(p.name)}</div><small>${esc(p.sku)}</small></td><td class="num">${fmt(p.baseline_delivered)}</td><td class="num">${fmt(p.scenario_delivered)}</td><td class="num ${p.lost_units > 0 ? 'negative' : 'neutral'}">${p.lost_units > 0 ? '−' + fmt(p.lost_units) : '0'}</td><td>${keptBar(p.baseline_delivered ? 100 * p.scenario_delivered / p.baseline_delivered : 100)}</td></tr>`).join('')
     || '<tr><td colspan="5" class="table-empty">No products in this scenario.</td></tr>';
   $('table-count').textContent = `Showing ${selected.length} of ${rows.length} products · units per day`;
   $('all-products-button').hidden = rows.length <= 8;
@@ -280,6 +397,12 @@ async function loadTrace() {
   $('trace-summary').innerHTML = `<div><strong>${fmt(product.historical_units, 0)}</strong><span>units sold in the source data ${evidenceTag('observed')}</span></div><div><strong>${fmt(product.daily_demand)}</strong><span>average demand, units/day ${evidenceTag('observed')}</span></div><div><strong>${payload.data.length}</strong><span>supply lanes carry it ${evidenceTag('assumed')}</span></div>`;
   $('trace-table').innerHTML = payload.data.map(l => `<tr><td><span class="mono">${esc(l.id)}</span><small>${l.backup ? 'Backup' : 'Primary'} contract</small></td><td>${esc(orgName(l.origin))} → ${esc(orgName(l.destination))}</td><td class="num">${fmt(l.capacity)}</td><td class="num">${plural(l.lead_days, 'day')}</td><td>${evidenceTag(l.provenance)}</td></tr>`).join('');
   $('trace-query').textContent = payload.evidence.cypher;
+  const involved = new Set(payload.data.flatMap(l => [l.origin, l.destination]));
+  const seen = new Map();
+  payload.data.forEach(l => { const key = `${l.origin}>${l.destination}>${l.backup}`; if (!seen.has(key)) seen.set(key, {origin: l.origin, destination: l.destination, backup: l.backup, flow: !l.backup}); });
+  const countries = new Set([...involved].map(id => state.graph.locations.find(loc => loc.id === state.organizations.find(o => o.id === id)?.location_id)?.country).filter(Boolean));
+  $('trace-caption').textContent = `${product.name} passes through ${plural(involved.size, 'facility', 'facilities')} in ${plural(countries.size, 'country', 'countries')}.`;
+  drawGeo($('trace-map'), {edges: [...seen.values()], node: id => involved.has(id) ? {} : {cls: 'muted'}});
 }
 $('trace-product').addEventListener('change', () => loadTrace().catch(err => error(err.message)));
 async function loadOrders() {
@@ -301,6 +424,12 @@ async function loadAnalytics() {
   if (results[0].status === 'fulfilled') {
     const data = results[0].value.results.filter(r => r.score > 0);
     const max = Math.max(...data.map(r => r.score), 1);
+    const scores = Object.fromEntries(results[0].value.results.map(r => [r.id, r.score]));
+    drawGeo($('analytics-map'), {
+      edges: state.graph.edges.filter(e => !e.backup).map(e => ({...e, flow: true})),
+      labelPush: locationId => Math.max(0, ...state.organizations.filter(o => o.location_id === locationId).map(o => (scores[o.id] > 0 ? 2.2 * Math.sqrt(scores[o.id]) : 0))),
+      node: id => scores[id] > 0 ? {radius: 4 + 2.2 * Math.sqrt(scores[id]), label: fmt(scores[id])} : {cls: 'muted'}
+    });
     $('centrality-chart').innerHTML = data.map(r => `<div class="centrality-row"><span>${esc(r.name)}</span><b><i style="width:${100 * r.score / max}%"></i></b><strong>${fmt(r.score)}</strong></div>`).join('');
   } else { $('centrality-chart').textContent = results[0].reason.message; }
   if (results[1].status === 'fulfilled') {

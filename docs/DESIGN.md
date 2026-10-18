@@ -1,5 +1,29 @@
 # Interface design
 
+## Version 1.3 — the world map
+
+The owner asked for an interface that makes people say "wow" without losing the
+clarity of 1.2. The signature addition is a dark, dotted world map that appears on
+three screens and always answers that screen's question:
+
+- **Disruption:** "Where the goods flow". Facilities sit at their assumed cities and
+  animated dashes move along every lane. When a scenario runs, the failed facility
+  pulses red and the shortfall travels outward hop by hop (amber), using the `hops`
+  the API already returns, while unaffected lanes dim. The four outcome numbers sit
+  on the map and count to their new values.
+- **Products:** "Route on the map" highlights only the facilities and lanes that carry
+  the selected product and says how many countries it crosses.
+- **Analysis:** "Bridges on the map" sizes each facility by its GDS betweenness score.
+
+The light editorial body from 1.2 stays, so the dark map is the one moment of drama
+on each page. The map is decorative-plus: everything on it is also available in the
+accessible network diagram, list and tables. On phones the map moves above the
+controls and becomes a swipeable canvas centred on Europe. Motion is switched off
+for `prefers-reduced-motion`. The impact table now shows a "Still delivered" bar per
+product. The backdrop is generated from public-domain Natural Earth data by
+`scripts/create_land_map.py`; see DATA_LICENSE.md.
+
+
 ## Version 1.2 — editorial redesign
 
 The owner found the 1.1 interface hard to follow and said it looked like a generic
