@@ -123,5 +123,24 @@
     "release": "https://github.com/tnyldrm23-afk/supplygraph/releases/tag/v1.0.0",
     "published_files_at_implementation_merge": 84
   },
-  "registry": "reports/registry-verification.json"
+  "registry": "reports/registry-verification.json",
+  "visual_refresh": {
+    "interface": "1.1",
+    "browser_report": "reports/browser-qa.json",
+    "responsive_checks": 20,
+    "widths": [
+      321,
+      376,
+      768,
+      1024,
+      1440
+    ],
+    "sampled_text_contrast_passed": 8,
+    "minimum_sampled_contrast": 5.16,
+    "javascript_syntax": "node --check app/static/app.js passed",
+    "combined_make_command": "make test INTEGRATION=1",
+    "unit_api_security_passed": 95,
+    "integration_passed": 10,
+    "regression_output": ".venv/bin/pytest -q -m 'not integration' --cov=app --cov-report=term-missing --cov-report=xml:reports/coverage.xml\n........................................................................ [ 75%]\n.......................                                                  [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/testclient.py:37\n  /Users/tanyildirim/Desktop/Knowledge Graph Project/.venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================================ tests coverage ================================\n_______________ coverage: platform darwin, python 3.12.6-final-0 _______________\n\nName                Stmts   Miss Branch BrPart  Cover   Missing\n---------------------------------------------------------------\napp/__init__.py         0      0      0      0   100%\napp/agent.py           87      3     32      1    97%   38, 104-105\napp/config.py          13      0      0      0   100%\napp/database.py        60     42     14      0    24%   29-36, 40, 44-52, 56-57, 61-125, 129-142, 146-169, 180\napp/main.py           149     27     22      0    83%   27-43, 66-67, 73, 83-84, 297-305\napp/models.py          29      0      4      0   100%\napp/queries.py          7      0      0      0   100%\napp/simulation.py     125      0     46      1    99%   99->96\n---------------------------------------------------------------\nTOTAL                 470     72    118      2    85%\nCoverage XML written to file reports/coverage.xml\nRequired test coverage of 60.0% reached. Total coverage: 84.69%\n95 passed, 10 deselected, 1 warning in 0.30s\n.venv/bin/pytest -q -m integration\n..........                                                               [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/testclient.py:37\n  /Users/tanyildirim/Desktop/Knowledge Graph Project/.venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n10 passed, 95 deselected, 1 warning in 0.20s\n"
+  }
 }
