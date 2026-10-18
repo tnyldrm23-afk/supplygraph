@@ -124,3 +124,14 @@ A product-specific distribution network, not a bill-of-materials manufacturing p
 No live supplier feeds, commercial ETA promises, purchasing or financial transactions.
 English application and delivery docs for AIDAMS; Turkish explanations for the owner.
 Deterministic NetworkX algorithms may serve tests/reference comparisons, never be presented as GDS.
+
+## M11 — Visual refinement requested by the owner
+- [x] Replace the small pale typography with a readable navy/blue interface and stronger contrast.
+- [x] Keep navigation labels visible on narrow screens; provide consistent native vector icons.
+- [x] Separate scenario configuration, network inspection, impact and recovery into clear sections.
+- [x] Give the network full content width; provide a readable facility-list alternative on mobile.
+- [x] Replace internal scenario IDs in the main result with a useful quantity summary.
+- [x] Verify all four screens, map/list selection, recovery, filtering and keyboard use in the browser.
+- [x] Twenty layout checks across five widths; eight contrast samples passed 4.5:1; no application-body overflow.
+- [ ] Refresh screenshots and owner documentation, publish through a reviewed feature PR.
+- [ ] Verify final public image and leave the redesigned application running.
