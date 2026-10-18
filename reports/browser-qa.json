@@ -16,5 +16,388 @@
     "Turkish supplier-failure question returned a validated impact plan"
   ],
   "turkish_question": "Atlas Textiles (SUP-01) devre dışı kalırsa hangi ürünler etkilenir?",
-  "assistant_answer": "Guardrails passed · actual graph evidence\n40 products lose delivery capacity; 112.2 units/day of demand are unmet. Backup contracts can restore 60.3 units/day. These are scenario estimates based on assumed supply lanes.\n\nObserved: DataCo products and historical demand. Assumed: scenario network and all supplier relationships.\n\nExecuted Cypher & parameters\nMATCH p=(s:Organization {id: $supplier_id})-[:FLOW*1..6]->(o:Organization) WHERE length(p) <= $depth WITH o, min(length(p)) AS hops RETURN o.id AS id, o.name AS name, o.kind AS kind, hops ORDER BY hops, id LIMIT $limit\n\n{\n  \"supplier_id\": \"SUP-01\",\n  \"depth\": 6,\n  \"limit\": 30\n}\nGraph records (6)"
+  "assistant_answer": "Guardrails passed · actual graph evidence\n40 products lose delivery capacity; 112.2 units/day of demand are unmet. Backup contracts can restore 60.3 units/day. These are scenario estimates based on assumed supply lanes.\n\nObserved: DataCo products and historical demand. Assumed: scenario network and all supplier relationships.\n\nExecuted Cypher & parameters\nMATCH p=(s:Organization {id: $supplier_id})-[:FLOW*1..6]->(o:Organization) WHERE length(p) <= $depth WITH o, min(length(p)) AS hops RETURN o.id AS id, o.name AS name, o.kind AS kind, hops ORDER BY hops, id LIMIT $limit\n\n{\n  \"supplier_id\": \"SUP-01\",\n  \"depth\": 6,\n  \"limit\": 30\n}\nGraph records (6)",
+  "visual_refresh": {
+    "checked_at": "2026-10-18",
+    "interface_version": "1.1",
+    "responsive_checks": [
+      {
+        "applicationWidth": 321,
+        "bodyFont": "15px",
+        "documentWidth": 356,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-overview",
+        "visibleError": false,
+        "width": 321
+      },
+      {
+        "applicationWidth": 321,
+        "bodyFont": "15px",
+        "documentWidth": 321,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-trace",
+        "visibleError": false,
+        "width": 321
+      },
+      {
+        "applicationWidth": 321,
+        "bodyFont": "15px",
+        "documentWidth": 321,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-analytics",
+        "visibleError": false,
+        "width": 321
+      },
+      {
+        "applicationWidth": 321,
+        "bodyFont": "15px",
+        "documentWidth": 321,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-assistant",
+        "visibleError": false,
+        "width": 321
+      },
+      {
+        "applicationWidth": 376,
+        "bodyFont": "15px",
+        "documentWidth": 411,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-overview",
+        "visibleError": false,
+        "width": 376
+      },
+      {
+        "applicationWidth": 376,
+        "bodyFont": "15px",
+        "documentWidth": 376,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-trace",
+        "visibleError": false,
+        "width": 376
+      },
+      {
+        "applicationWidth": 376,
+        "bodyFont": "15px",
+        "documentWidth": 376,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-analytics",
+        "visibleError": false,
+        "width": 376
+      },
+      {
+        "applicationWidth": 376,
+        "bodyFont": "15px",
+        "documentWidth": 376,
+        "headlineFont": "29px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "12px",
+        "view": "view-assistant",
+        "visibleError": false,
+        "width": 376
+      },
+      {
+        "applicationWidth": 768,
+        "bodyFont": "15px",
+        "documentWidth": 768,
+        "headlineFont": "33px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-overview",
+        "visibleError": false,
+        "width": 768
+      },
+      {
+        "applicationWidth": 768,
+        "bodyFont": "15px",
+        "documentWidth": 768,
+        "headlineFont": "33px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-trace",
+        "visibleError": false,
+        "width": 768
+      },
+      {
+        "applicationWidth": 768,
+        "bodyFont": "15px",
+        "documentWidth": 768,
+        "headlineFont": "33px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-analytics",
+        "visibleError": false,
+        "width": 768
+      },
+      {
+        "applicationWidth": 768,
+        "bodyFont": "15px",
+        "documentWidth": 768,
+        "headlineFont": "33px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-assistant",
+        "visibleError": false,
+        "width": 768
+      },
+      {
+        "applicationWidth": 1024,
+        "bodyFont": "15px",
+        "documentWidth": 1024,
+        "headlineFont": "28px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-overview",
+        "visibleError": false,
+        "width": 1024
+      },
+      {
+        "applicationWidth": 1024,
+        "bodyFont": "15px",
+        "documentWidth": 1024,
+        "headlineFont": "28px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-trace",
+        "visibleError": false,
+        "width": 1024
+      },
+      {
+        "applicationWidth": 1024,
+        "bodyFont": "15px",
+        "documentWidth": 1024,
+        "headlineFont": "28px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-analytics",
+        "visibleError": false,
+        "width": 1024
+      },
+      {
+        "applicationWidth": 1024,
+        "bodyFont": "15px",
+        "documentWidth": 1024,
+        "headlineFont": "28px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "13px",
+        "view": "view-assistant",
+        "visibleError": false,
+        "width": 1024
+      },
+      {
+        "applicationWidth": 1440,
+        "bodyFont": "15px",
+        "documentWidth": 1440,
+        "headlineFont": "36px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "14px",
+        "view": "view-overview",
+        "visibleError": false,
+        "width": 1440
+      },
+      {
+        "applicationWidth": 1440,
+        "bodyFont": "15px",
+        "documentWidth": 1440,
+        "headlineFont": "36px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "14px",
+        "view": "view-trace",
+        "visibleError": false,
+        "width": 1440
+      },
+      {
+        "applicationWidth": 1440,
+        "bodyFont": "15px",
+        "documentWidth": 1440,
+        "headlineFont": "36px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "14px",
+        "view": "view-analytics",
+        "visibleError": false,
+        "width": 1440
+      },
+      {
+        "applicationWidth": 1440,
+        "bodyFont": "15px",
+        "documentWidth": 1440,
+        "headlineFont": "36px",
+        "hostCommentsOverlay": true,
+        "navigationFont": "14px",
+        "view": "view-assistant",
+        "visibleError": false,
+        "width": 1440
+      }
+    ],
+    "interactions": [
+      {
+        "view": "desktop-overview",
+        "bodyFont": "15px",
+        "loss": "112.2",
+        "nodes": 13,
+        "pageWidth": 1440,
+        "products": "40",
+        "result": "Scenario calculated40 products affected · 112.2 unmet units/day7 facilities in exposure scope. Results use assumed supply lanes.Review product impact ↓",
+        "service": "67.1",
+        "width": 1440
+      },
+      {
+        "view": "desktop-backup",
+        "backup": true,
+        "loss": "52",
+        "overflow": false,
+        "service": "84.8"
+      },
+      {
+        "view": "desktop-products",
+        "eta": true,
+        "overflow": false,
+        "rows": 10
+      },
+      {
+        "view": "desktop-analytics",
+        "centralityRows": 5,
+        "components": 3,
+        "overflow": false,
+        "width": 1440
+      },
+      {
+        "view": "desktop-assistant",
+        "overflow": false,
+        "queryCollapsed": true,
+        "summary": "40 products lose delivery capacity; 112.2 units/day of demand are unmet. Backup contracts can restore 60.3 units/day. These are scenario estimates based on assumed supply lanes."
+      },
+      {
+        "view": "assistant-guardrail",
+        "blocked": true
+      },
+      {
+        "view": "mobile-network",
+        "default": {
+          "facilityCount": 13,
+          "listVisible": "grid",
+          "mapVisible": "none"
+        },
+        "selection": {
+          "pressed": "Istanbul AssemblyIstanbul · MFG-02 · Selected",
+          "selected": "MFG-02"
+        },
+        "map": {
+          "applicationWidth": 376,
+          "mode": "map",
+          "scrollableMap": true,
+          "viewport": 376
+        }
+      },
+      {
+        "view": "mobile-scenario-controls",
+        "zero": {
+          "affected": "0",
+          "reduction": "0%",
+          "service": "100"
+        },
+        "bounded": {
+          "affected": "40",
+          "loss": "112.2",
+          "result": "Scenario calculated40 products affected · 112.2 unmet units/day2 facilities in exposure scope. Results use assumed supply lanes. Exposure depth limit reached.Review product impact ↓"
+        },
+        "reset": {
+          "affected": "0",
+          "resultHidden": true,
+          "service": "100",
+          "track": "100%"
+        }
+      },
+      {
+        "view": "mobile-filter-and-methodology",
+        "filter": {
+          "sku": "SKU-1360",
+          "total": "/ 1"
+        },
+        "reset": {
+          "sku": "",
+          "total": "/ 118"
+        },
+        "modal": {
+          "bodyFont": "14px",
+          "open": true
+        }
+      },
+      {
+        "view": "desktop-keyboard",
+        "selected": "MFG-01"
+      }
+    ],
+    "contrast_samples": [
+      {
+        "background": "rgb(243, 245, 249)",
+        "color": "rgb(83, 105, 133)",
+        "ratio": 5.16,
+        "selector": ".page-heading p"
+      },
+      {
+        "background": "rgb(255, 255, 255)",
+        "color": "rgb(86, 101, 126)",
+        "ratio": 5.9,
+        "selector": ".metric:not(.metric-primary) .metric-label"
+      },
+      {
+        "background": "rgb(23, 45, 85)",
+        "color": "rgb(211, 223, 247)",
+        "ratio": 10.15,
+        "selector": ".metric-primary .metric-label"
+      },
+      {
+        "background": "rgb(255, 255, 255)",
+        "color": "rgb(83, 105, 133)",
+        "ratio": 5.63,
+        "selector": ".facility-info"
+      },
+      {
+        "background": "rgb(255, 255, 255)",
+        "color": "rgb(70, 85, 112)",
+        "ratio": 7.52,
+        "selector": ".field-label"
+      },
+      {
+        "background": "rgb(49, 91, 214)",
+        "color": "rgb(255, 255, 255)",
+        "ratio": 5.84,
+        "selector": ".nav.active"
+      },
+      {
+        "background": "rgb(49, 91, 214)",
+        "color": "rgb(255, 255, 255)",
+        "ratio": 5.84,
+        "selector": ".run-button"
+      },
+      {
+        "background": "rgb(237, 242, 252)",
+        "color": "rgb(44, 70, 111)",
+        "ratio": 8.45,
+        "selector": ".data-notice strong"
+      }
+    ],
+    "minimum_sampled_contrast": 5.16,
+    "notes": [
+      "Twenty application-layout checks across five viewport widths and four screens.",
+      "Application width measured from BODY; at 321 px the in-app browser injects a separate comments overlay directly under HTML, which can enlarge root scrollWidth independently of the application.",
+      "Eight sampled text/control contrast ratios passed 4.5:1. This is a focused check, not a claim of a complete accessibility certification.",
+      "Local model success and blocked write were exercised through the redesigned UI.",
+      "Temporary responsive viewport override reset to the actual 376 px pane."
+    ]
+  }
 }

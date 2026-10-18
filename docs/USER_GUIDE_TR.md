@@ -8,12 +8,12 @@ uygulamanın dağıtılabilir Docker imajını saklar. Packages sayfası simüla
 
 ## İlk deneme
 
-1. **Control room** bölümünde **Atlas Textiles** seç.
+1. **Overview** bölümünde **Atlas Textiles** seç.
 2. Kapasite kaybını **%100** bırak ve senaryoyu çalıştır.
 3. Etkilenen ürünleri ve karşılanamayan günlük talebi incele.
 4. Yedekleri açarak toparlanma sonucunu karşılaştır.
-5. Bir ürün seçip **Product trace** bölümünde geçtiği yolları incele.
-6. **Graph assistant** bölümünde “Atlas Textiles (SUP-01) kapanırsa ne olur?” diye sor.
+5. Bir ürün seçip **Products** bölümünde geçtiği yolları incele.
+6. **Assistant** bölümünde “Atlas Textiles (SUP-01) kapanırsa ne olur?” diye sor.
    Cevabın yanında kullanılan Cypher sorgusunu ve kanıtları görebilirsin.
 
 Tam Atlas kesintisi için doğrulanan örnekte 40 ürün etkilenir. Bir ürünün etkilenmesi,
@@ -34,10 +34,10 @@ ayrıca hesaplanır. Sonuçlar seçili kesinti ve yedek ayarlarına bağlıdır.
 | Shortfall / unmet demand | Mevcut talebin karşılanamayan kısmı |
 | Recovery | Yedekler devreye girdiğinde geri kazanılan ürün akışı |
 | Service level | Talebin karşılanabilen yüzdesi |
-| Control room | Kesinti ayarları, ağ ve sonuç karşılaştırması |
-| Product trace | Ürünün kökeni, yolları ve süre bilgileri |
-| Graph analytics | Ağ bağlantıları ve köprü görevi gören tesisler |
-| Graph assistant | Doğal dille, izin verilen ağ sorularını sorma |
+| Overview | Kesinti ayarları, ağ ve sonuç karşılaştırması |
+| Products | Ürünün kökeni, yolları ve süre bilgileri |
+| Analytics | Ağ bağlantıları ve köprü görevi gören tesisler |
+| Assistant | Doğal dille, izin verilen ağ sorularını sorma |
 
 Miktarlar günlük ortalama ürün adedidir. “112 birim/gün kayıp”, 112 şirket veya
 112 ürün türü demek değildir. Ayrıca toplam eksik talep ile kesintinin **eklediği**
@@ -79,3 +79,11 @@ kesin olarak yaşanacağını veya etkisini tahmin eden bir model değildir.
 
 Savunmaya hazırlanmak için [DEFENSE.md](DEFENSE.md), model kararları için
 [MODELING.md](MODELING.md), hesapların ayrıntısı için [SIMULATION.md](SIMULATION.md) okunabilir.
+
+## Yeni görsel düzen
+
+Üstte dört özet kartı, altında senaryo oluşturucu, ağ ve ürün etkisi bulunur.
+Telefonda menü etiketleri görünür kalır. Ağ dar ekranda **Facilities** listesiyle
+açılır; **Map** düğmesiyle haritaya geçebilirsin. Harita ve tablolar kendi
+alanlarında yana kaydırılabilir. **Review product impact** bağlantısı doğrudan
+etkilenen ürünlere götürür. Asistanın Cypher ayrıntıları istenince açılır.

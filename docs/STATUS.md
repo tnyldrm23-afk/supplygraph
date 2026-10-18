@@ -1,6 +1,6 @@
 # Delivery status
 
-Updated: 2026-10-18 (Europe/Paris). Implementation release: **v1.0.0**.
+Updated: 2026-10-18 (Europe/Paris). Backend baseline release: **v1.0.0**. Visual interface refinement: **1.1**.
 Solo author: **Tan YILDIRIM — B00822334**. Level 2, project 3.
 
 ## Verified implementation
@@ -53,3 +53,13 @@ Solo work and AI assistance are disclosed. Team contribution/review criteria rem
 for the instructor to interpret for a solo submission; no collaborators are invented.
 Tan must be able to explain the submitted choices; docs/DEFENSE.md provides practice.
 No deadline was supplied. No paid API, hosting or cloud deployment is required.
+
+## Owner-requested visual refinement
+Larger readable typography, navy/blue palette, consistent vector icons, visible
+mobile navigation, full-width map and mobile facility list are implemented.
+Twenty application-layout checks passed across 321/376/768/1024/1440 px and all
+four screens. Eight sampled text/control contrast ratios exceeded 4.5:1. Real
+scenario, reserve recovery, filtering, depth, reset, keyboard selection, local
+model answer and blocked-write interactions were checked. Browser report and
+refreshed screenshots are tracked. Publication of this refinement is the current
+final delivery step; the baseline release evidence above remains historical.
