@@ -5,8 +5,8 @@
   <meta name="theme-color" content="#f5f3ee">
   <title>SupplyGraph — Disruption simulator</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=1.2.0">
-  <script src="/app.js?v=1.2.0" defer></script>
+  <link rel="stylesheet" href="/styles.css?v=1.3.0">
+  <script src="/app.js?v=1.3.0" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -90,7 +90,18 @@
       </aside>
 
       <div class="sim-results">
-        <section class="readout" aria-label="Scenario outcome" aria-live="polite">
+        <section class="stage" aria-labelledby="stage-title">
+          <div class="stage-head">
+            <div>
+              <h2 id="stage-title">Where the goods flow</h2>
+              <p id="stage-caption">Baseline — goods moving on every primary lane</p>
+            </div>
+            <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li><li class="state"><i class="ring failed"></i>Disrupted</li><li class="state"><i class="ring affected"></i>Downstream</li>
+            </ul>
+          </div>
+          <div class="stage-map"><svg id="geo-map" viewBox="0 0 1060 359" role="img" aria-label="World map of the modeled network. Facilities sit at their assumed cities; animated lines show goods moving along lanes."></svg></div>
+          <div class="readout" aria-label="Scenario outcome" aria-live="polite">
           <article class="metric metric-lead">
             <h3 class="metric-label">Demand fulfilled</h3>
             <p class="metric-value"><span id="metric-service">—</span><small>%</small></p>
@@ -112,12 +123,13 @@
             <p class="metric-value"><span id="metric-recovery">0</span><small>units/day</small></p>
             <p class="metric-foot"><span class="neutral">From reserve contracts</span></p>
           </article>
+          </div>
         </section>
 
         <section class="panel network-panel" aria-labelledby="network-title">
           <div class="panel-heading">
             <div>
-              <h2 id="network-title">Distribution network <span class="count" id="facility-count">13 facilities</span></h2>
+              <h2 id="network-title">Network diagram <span class="count" id="facility-count">13 facilities</span></h2>
               <p>Goods move left to right, from suppliers to retailers. Click a facility to select it.</p>
             </div>
             <div class="network-toolbar">
@@ -153,7 +165,7 @@
             </div>
             <div class="table-scroll" tabindex="0" role="region" aria-label="Product impact table">
               <table>
-                <thead><tr><th>Product</th><th class="num">Before</th><th class="num">After</th><th class="num">Lost</th><th>Status</th></tr></thead>
+                <thead><tr><th>Product</th><th class="num">Before</th><th class="num">After</th><th class="num">Lost</th><th>Still delivered</th></tr></thead>
                 <tbody id="impact-table"><tr><td colspan="5" class="table-empty">Nothing simulated yet.</td></tr></tbody>
               </table>
             </div>
@@ -185,6 +197,15 @@
         <p class="lede">Pick a product to see every lane it travels on, how much each lane can carry and how long it takes. The product and its demand are real; the lanes are modeled.</p>
       </div>
     </header>
+    <section class="stage stage-compact" aria-labelledby="trace-stage-title">
+      <div class="stage-head">
+        <div><h2 id="trace-stage-title">Route on the map</h2><p id="trace-caption">Pick a product below.</p></div>
+        <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li><li class="state"><i class="dash"></i>Backup lane</li>
+            </ul>
+      </div>
+      <div class="stage-map"><svg id="trace-map" viewBox="0 0 1060 359" role="img" aria-label="World map highlighting the facilities and lanes that carry the selected product."></svg></div>
+    </section>
     <section class="panel">
       <div class="panel-heading">
         <div><h2>Supply lanes</h2><p>Every contract that can carry the selected product.</p></div>
@@ -218,6 +239,15 @@
       </div>
       <span class="tag" id="gds-version">GDS</span>
     </header>
+    <section class="stage stage-compact" aria-labelledby="analytics-stage-title">
+      <div class="stage-head">
+        <div><h2 id="analytics-stage-title">Bridges on the map</h2><p id="analytics-caption">Circle size shows betweenness: how many shortest routes pass through a facility.</p></div>
+        <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li>
+            </ul>
+      </div>
+      <div class="stage-map"><svg id="analytics-map" viewBox="0 0 1060 359" role="img" aria-label="World map where each facility's circle grows with its betweenness score."></svg></div>
+    </section>
     <div class="analytics-grid">
       <section class="panel">
         <div class="panel-heading"><div><h2>Bridges</h2><p>Betweenness centrality on directed flow</p></div></div>
