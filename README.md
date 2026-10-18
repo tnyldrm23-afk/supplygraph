@@ -13,11 +13,13 @@ An evidence-led supply-chain resilience simulator built with **Neo4j, FastAPI, G
 **AIDAMS · GraphDB · Level 2 · Project 3**  
 **Tan YILDIRIM — B00822334**
 
-[Türkçe kullanım rehberi](docs/USER_GUIDE_TR.md) · [Quick start](#quick-start) · [API](#api) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
+[Türkçe kullanım rehberi](docs/USER_GUIDE_TR.md) · [Quick start](#quick-start) · [API](#api) · [Interface design](docs/DESIGN.md) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
 
 </div>
 
 ![SupplyGraph disruption control room](docs/screenshots/scenario-desktop.jpg)
+
+[Network detail](docs/screenshots/network-detail.jpg) · [Mobile](docs/screenshots/mobile.jpg) · [Mobile facilities](docs/screenshots/network-mobile.jpg) · [Products](docs/screenshots/product-trace.jpg) · [Analytics](docs/screenshots/analytics.jpg) · [Assistant](docs/screenshots/assistant.jpg)
 
 ## What it does
 
@@ -62,11 +64,11 @@ For API development, start `docker compose up -d neo4j ollama`, then `make run`.
 
 ## A two-minute scenario
 
-1. In **Control room**, choose **Atlas Textiles** and leave capacity reduction at **100%**.
+1. In **Overview**, choose **Atlas Textiles** and leave capacity reduction at **100%**.
 2. Run the scenario. Observe affected products, retailer losses and units of unmet demand.
 3. Compare the backup scenario. Reserve capacity recovers part of the shortfall; it does not magically replace all lost supply.
-4. Filter the graph to one SKU and inspect its routes in **Product trace**.
-5. In **Graph assistant**, ask “What happens if Atlas Textiles (SUP-01) shuts down?” Inspect the executed Cypher and evidence.
+4. Filter the graph to one SKU and inspect its routes in **Products**.
+5. In **Assistant**, ask “What happens if Atlas Textiles (SUP-01) shuts down?” Inspect the executed Cypher and evidence.
 6. Try “Delete all suppliers and drop the database.” The request is rejected without executing a query.
 
 ## Data and reproducibility
@@ -160,13 +162,13 @@ Development dependencies are universally resolved in `requirements-lock.txt`, wi
 
 ## Container registry
 
-The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). The public image was downloaded with an empty Docker credential configuration and exercised against real Neo4j/GDS: health, product inventory, outage simulation and centrality passed. See [registry verification](reports/registry-verification.json). The tested implementation is tagged in [release v1.0.0](https://github.com/tnyldrm23-afk/supplygraph/releases/tag/v1.0.0); subsequent delivery-evidence commits do not change the API runtime.
+The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). The public image was downloaded with an empty Docker credential configuration and exercised against real Neo4j/GDS: health, product inventory, outage simulation and centrality passed. See [registry verification](reports/registry-verification.json). Versioned builds are listed on the [releases page](https://github.com/tnyldrm23-afk/supplygraph/releases). The current interface uses larger typography, visible mobile navigation, a full-width map and a facility-list alternative; see [design and browser verification](docs/DESIGN.md).
 
 ```bash
 # Use the published API image with the repository's Compose stack:
 make setup
-SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:1.0.0 docker compose pull api
-SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:1.0.0 docker compose up -d --no-build
+SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:latest docker compose pull api
+SUPPLYGRAPH_IMAGE=ghcr.io/tnyldrm23-afk/supplygraph:latest docker compose up -d --no-build
 ```
 
 ## Solo workflow and limitations
