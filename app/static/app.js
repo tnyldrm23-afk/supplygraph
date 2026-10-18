@@ -24,20 +24,53 @@ function svgElement(tag, attrs, text) {
   if (text !== undefined) el.textContent = text;
   return el;
 }
-const kindStyle = { supplier: ['#497248','#ecf2e7','SUPPLIERS'], manufacturer: ['#7f9565','#f0f3e9','MANUFACTURERS'], distributor: ['#b18a56','#f7f1e7','DISTRIBUTION'], retailer: ['#768e91','#edf2f1','RETAILERS'] };
+const kindStyle = {
+  supplier: ['#426bc2', '#eaf0ff', 'Suppliers'],
+  manufacturer: ['#8963b7', '#f2edfa', 'Manufacturers'],
+  distributor: ['#8e5d22', '#fbf2e4', 'Distributors'],
+  retailer: ['#276e5a', '#e8f4ee', 'Retailers']
+};
+function selectFacility(id) {
+  $('supplier-select').value = id;
+  facilityInfo();
+  renderGraph();
+}
+function graphView() {
+  return $('graph-wrap').dataset.mode === 'auto'
+    ? (window.matchMedia('(max-width: 760px)').matches ? 'list' : 'map')
+    : $('graph-wrap').dataset.mode;
+}
+function syncGraphView() {
+  document.querySelectorAll('[data-network-view]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.networkView === graphView()));
+  });
+}
+document.querySelectorAll('[data-network-view]').forEach(button => {
+  button.addEventListener('click', () => {
+    $('graph-wrap').dataset.mode = button.dataset.networkView;
+    syncGraphView();
+  });
+});
+window.matchMedia('(max-width: 760px)').addEventListener('change', syncGraphView);
 function renderGraph() {
   if (!state.graph) return;
-  const svg = $('network-graph'); svg.replaceChildren();
+  const svg = $('network-graph');
+  svg.replaceChildren();
   const defs = svgElement('defs');
-  ['normal','affected','failed'].forEach((type, index) => { const marker = svgElement('marker', { id: `arrow-${type}`, markerWidth: 5, markerHeight: 5, refX: 4.5, refY: 2.5, orient: 'auto' }); marker.append(svgElement('path', {d:'M0,0 L5,2.5 L0,5 Z',fill:['#aaba9f','#cf8054','#c75140'][index]})); defs.append(marker); });
+  ['normal', 'affected', 'failed'].forEach((type, index) => {
+    const marker = svgElement('marker', {id:`arrow-${type}`, markerWidth:6, markerHeight:6, refX:5.5, refY:3, orient:'auto'});
+    marker.append(svgElement('path', {d:'M0,0 L6,3 L0,6 Z',fill:['#9eb2d3','#d49336','#c45a66'][index]}));
+    defs.append(marker);
+  });
   svg.append(defs);
   const positions = {};
-  Object.keys(kindStyle).forEach((kind, col) => {
+  Object.entries(kindStyle).forEach(([kind, colors], col) => {
     const nodes = state.graph.nodes.filter(n => n.kind === kind);
-    const x = 22 + col * 239;
-    svg.append(svgElement('text', { x, y: 26, fill:'#95a087','font-size':9,'font-family':'system-ui','letter-spacing':1.1 }, kindStyle[kind][2]));
-    svg.append(svgElement('text', {x:x+172,y:26,fill:'#aeb6a4','font-size':9,'text-anchor':'end'},String(nodes.length).padStart(2,'0')));
-    nodes.forEach((node,index) => { positions[node.id] = { x, y: 52 + index * 70 + (nodes.length === 3 ? 28 : 0) }; });
+    const x = 34 + col * 263;
+    svg.append(svgElement('rect', {x:x-14,y:14,width:236,height:406,rx:12,fill:colors[1],opacity:.45}));
+    svg.append(svgElement('text', {x,y:43,fill:colors[0],'font-size':13,'font-family':'system-ui','font-weight':650}, colors[2]));
+    svg.append(svgElement('text', {x:x+207,y:43,fill:'#5e718e','font-size':12,'text-anchor':'end','font-family':'system-ui'}, String(nodes.length).padStart(2,'0')));
+    nodes.forEach((node,index) => { positions[node.id] = {x,y:74+index*82+(nodes.length===3?41:0)}; });
   });
   const failures = new Set(state.scenario?.scenario.supplier_ids || []);
   const exposed = new Set(state.scenario?.exposed_organizations.map(n => n.id) || []);
@@ -46,38 +79,55 @@ function renderGraph() {
   state.graph.edges.forEach(edge => {
     const from = positions[edge.origin], to = positions[edge.destination];
     if (!from || !to) return;
-    let cls = 'edge' + (edge.backup ? ' backup' : '');
-    let marker = 'normal';
+    let cls = 'edge' + (edge.backup ? ' backup' : ''), marker = 'normal';
     if (reduction > 0) {
       if (failures.has(edge.origin) || failures.has(edge.destination)) { cls += ' failed'; marker = 'failed'; }
       else if (exposed.has(edge.origin) && !edge.backup) { cls += ' affected'; marker = 'affected'; }
       else if (!edge.backup) cls += ' faded';
     }
-    const x1 = from.x + 173, y1 = from.y + 24, x2 = to.x, y2 = to.y + 24;
-    const bend = Math.max(25, Math.abs(x2 - x1) * .5);
-    const path = svgElement('path', {d:`M${x1},${y1} C${x1+bend},${y1} ${x2-bend},${y2} ${x2},${y2}`,class:cls,'marker-end':`url(#arrow-${marker})`});
-    if (edge.backup && backups) { path.setAttribute('style', 'opacity:1;stroke:#4b8050;stroke-width:2'); }
-    path.append(svgElement('title',{},`${orgName(edge.origin)} → ${orgName(edge.destination)} · ${edge.product_count} products · ${edge.backup ? 'Reserve contract' : 'Primary contract'} · Assumed topology`)); svg.append(path);
+    const x1=from.x+208, y1=from.y+34, x2=to.x, y2=to.y+34;
+    const bend=Math.max(25,Math.abs(x2-x1)*.5);
+    const path=svgElement('path',{d:`M${x1},${y1} C${x1+bend},${y1} ${x2-bend},${y2} ${x2},${y2}`,class:cls,'marker-end':`url(#arrow-${marker})`});
+    if (edge.backup && backups) path.setAttribute('style','opacity:1;stroke:#3b9070;stroke-width:2');
+    path.append(svgElement('title',{},`${orgName(edge.origin)} → ${orgName(edge.destination)} · ${edge.product_count} products · ${edge.backup?'Reserve':'Primary'} contract · Assumed topology`));
+    svg.append(path);
   });
   state.graph.nodes.forEach(node => {
-    const pos = positions[node.id], colors = kindStyle[node.kind];
-    const isFailed = failures.has(node.id) && reduction > 0;
-    const isExposed = exposed.has(node.id) && reduction > 0;
-    const selected = $('supplier-select').value === node.id;
-    const group = svgElement('g', {class:'node',transform:`translate(${pos.x},${pos.y})`,tabindex:0,role:'button','aria-label':`${node.name}, ${node.kind}. Select for scenario.`});
-    group.append(svgElement('rect', {width:173,height:49,rx:6,fill:isFailed?'#fdf0e7':'#ffffff',stroke:isFailed?'#cf7b52':selected?'#69835c':isExposed?'#d7b78a':'#dfe6d7','stroke-width':selected?1.4:1}));
-    group.append(svgElement('rect', {x:9,y:11,width:27,height:27,rx:5,fill:isFailed?'#f5dbc8':colors[1]}));
-    // Domain role icon, drawn as code-native vector marks.
-    const icon = node.kind === 'supplier' ? 'M16 24h13m-10-5 5-4 5 4v12H19V19m3 7h4' : node.kind === 'manufacturer' ? 'M16 30V20l6 3v-5l6 4v8H16m3-3h2m4 0h2' : node.kind === 'distributor' ? 'm16 20 6-4 7 4v9l-7 4-6-4v-9m0 0 6 4 7-4m-7 4v9' : 'M16 23h14l-2-6H18l-2 6m2 0v9h10v-9m-7 9v-6h4v6';
-    group.append(svgElement('path',{d:icon,fill:'none',stroke:isFailed?'#b26536':colors[0],'stroke-width':1.2,'stroke-linejoin':'round'}));
-    group.append(svgElement('text', {x:44,y:22,fill:isFailed?'#96542f':'#476039','font-size':11,'font-family':'system-ui','font-weight':550},node.name));
-    const loc = state.graph.locations.find(l => l.id === node.location_id);
-    group.append(svgElement('text', {x:44,y:35,fill:'#9da78f','font-size':8,'font-family':'system-ui'},`${loc?.name || node.id} · ${node.id}`));
-    group.append(svgElement('circle',{cx:162,cy:12,r:2.2,fill:isFailed?'#cf774c':isExposed?'#c9a36d':'#91aa79'}));
-    const selectNode = () => { $('supplier-select').value = node.id; facilityInfo(); renderGraph(); };
-    group.addEventListener('click',selectNode); group.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();selectNode();}});
+    const pos=positions[node.id], colors=kindStyle[node.kind];
+    const failed=failures.has(node.id)&&reduction>0, affected=exposed.has(node.id)&&reduction>0;
+    const selected=$('supplier-select').value===node.id;
+    const group=svgElement('g',{class:'node',transform:`translate(${pos.x},${pos.y})`,tabindex:0,role:'button','aria-label':`${node.name}, ${node.kind}. Select for scenario.`,'aria-pressed':String(selected)});
+    group.append(svgElement('title',{},`${node.name} · ${node.id} · ${failed?'Disrupted':affected?'Downstream exposure':'Assumed facility'}`));
+    group.append(svgElement('rect',{class:'node-card',width:208,height:68,rx:9,fill:failed?'#fff2f2':selected?'#f3f7ff':'#fff',stroke:failed?'#d58c96':selected?'#6488d0':affected?'#d9b584':'#d5dfed','stroke-width':selected?1.8:1}));
+    group.append(svgElement('rect',{x:12,y:16,width:35,height:35,rx:9,fill:failed?'#fae1e4':colors[1]}));
+    const icon=node.kind==='supplier'?'M20 32h18m-16-6 7-5 7 5v16H22V26m5 9h5':node.kind==='manufacturer'?'M20 41V26l8 4v-7l9 6v12H20m4-4h3m5 0h3':node.kind==='distributor'?'m20 27 9-5 9 5v12l-9 5-9-5V27m0 0 9 5 9-5m-9 5v12':'M20 31h19l-3-8H23l-3 8m3 0v13h13V31m-9 13v-8h5v8';
+    group.append(svgElement('path',{d:icon,fill:'none',stroke:failed?'#b54a5b':colors[0],'stroke-width':1.5,'stroke-linejoin':'round'}));
+    group.append(svgElement('text',{x:57,y:29,fill:failed?'#a34554':'#2d456b','font-size':13,'font-family':'system-ui','font-weight':600},node.name));
+    const location=state.graph.locations.find(l=>l.id===node.location_id);
+    group.append(svgElement('text',{x:57,y:48,fill:'#5e718e','font-size':10,'font-family':'system-ui'},`${location?.name||node.id} · ${node.id}`));
+    group.append(svgElement('circle',{cx:195,cy:12,r:2.6,fill:failed?'#bc4d5e':affected?'#bc8e49':'#76a98d'}));
+    group.addEventListener('click',()=>selectFacility(node.id));
+    group.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();selectFacility(node.id);}});
     svg.append(group);
   });
+  const list=$('network-list');list.replaceChildren();
+  Object.entries(kindStyle).forEach(([kind,colors])=>{
+    const nodes=state.graph.nodes.filter(n=>n.kind===kind);
+    const section=document.createElement('section');section.className='facility-group';
+    const heading=document.createElement('h3');heading.innerHTML=`${esc(colors[2])}<span>${nodes.length}</span>`;section.append(heading);
+    nodes.forEach(node=>{
+      const failed=failures.has(node.id)&&reduction>0, selected=$('supplier-select').value===node.id;
+      const location=state.graph.locations.find(l=>l.id===node.location_id);
+      const button=document.createElement('button');button.type='button';button.className='facility-item'+(selected?' selected':'')+(failed?' failed':'');
+      button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${node.name}, ${node.kind}. Select for scenario.`);
+      button.innerHTML=`<span class="facility-dot" style="background:${failed?'#bc4d5e':colors[0]}" aria-hidden="true"></span><span><strong>${esc(node.name)}</strong><small>${esc(location?.name||node.id)} · ${esc(node.id)}${failed?' · Disrupted':selected?' · Selected':''}</small></span>`;
+      button.addEventListener('click',()=>selectFacility(node.id));section.append(button);
+    });list.append(section);
+  });
+  syncGraphView();
+}
+function updateServiceTrack(value) {
+  $('service-spark').style.width = Math.max(0,Math.min(100,value))+'%';
 }
 function facilityInfo() {
   const organization = state.organizations.find(o => o.id === $('supplier-select').value);
@@ -87,6 +137,7 @@ function facilityInfo() {
 function baseline() {
   state.scenario = null; state.allProducts = false;
   $('metric-service').textContent = fmt(state.overview.baseline_service_level);
+  updateServiceTrack(state.overview.baseline_service_level);
   $('metric-products').textContent = '0'; $('metric-loss').textContent = '0'; $('metric-recovery').textContent = '0';
   $('service-change').textContent = 'Baseline capacity'; $('service-change').className='positive';
   $('product-change').textContent='No disruption applied'; $('loss-change').textContent='Baseline network intact';
@@ -108,11 +159,11 @@ async function runScenario(event) {
     state.scenario = await api('/scenarios',{method:'POST',body:JSON.stringify(body)});
     renderScenario();
   } catch (err) { error(err.message); }
-  finally { button.disabled=false; button.innerHTML='Run disruption scenario <span>↗</span>'; }
+  finally { button.disabled=false; button.innerHTML='Run scenario <span>↗</span>'; }
 }
 function renderScenario() {
   const s = state.scenario, t = s.totals;
-  $('metric-service').textContent=fmt(t.service_level); $('metric-products').textContent=fmt(s.affected_products,0);
+  $('metric-service').textContent=fmt(t.service_level); updateServiceTrack(t.service_level); $('metric-products').textContent=fmt(s.affected_products,0);
   $('metric-product-total').textContent='/ '+s.products.length;
   $('metric-loss').textContent=fmt(t.unmet_demand); $('metric-recovery').textContent=fmt(t.restored_with_backups);
   const delta = t.service_level - t.baseline_service_level;
@@ -123,7 +174,7 @@ function renderScenario() {
   $('impact-count').textContent=`${s.affected_products} affected`;
   $('impact-subtitle').textContent='Baseline versus scenario · independent product-specific capacity';
   $('scenario-result').hidden=false;
-  $('scenario-result').innerHTML=`<strong>${esc(s.scenario_id)}</strong> · ${s.exposed_organizations.length} facilities in exposure scope.${s.traversal_truncated?' Depth limit reached; flow uses the complete network.':''}<br>Results use assumed lanes and capacities.`;
+  $('scenario-result').innerHTML=`<div><strong>Scenario calculated</strong><p>${fmt(s.affected_products,0)} products affected · ${fmt(t.unmet_demand)} unmet units/day</p><small>${s.exposed_organizations.length} facilities in exposure scope. Results use assumed supply lanes.${s.traversal_truncated?' Exposure depth limit reached.':''}</small></div><a href="#product-impact">Review product impact ↓</a>`;
   const recovery = Math.min(100,100*(t.scenario_delivered+t.restored_with_backups)/t.demand);
   $('bar-scenario').style.width=t.service_level+'%'; $('bar-scenario-value').textContent=fmt(t.service_level,0)+'%';
   $('bar-recovery').style.width=recovery+'%'; $('bar-recovery-value').textContent=fmt(recovery,0)+'%';
@@ -152,7 +203,7 @@ async function changeView(view) {
   state.view=view;error('');
   document.querySelectorAll('.view').forEach(el=>{el.hidden=el.id!=='view-'+view;});
   document.querySelectorAll('.nav').forEach(el=>{el.classList.toggle('active',el.dataset.view===view);if(el.dataset.view===view)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
-  $('breadcrumb-title').textContent={overview:'Control room',trace:'Product trace',analytics:'Network analytics',assistant:'Graph assistant'}[view];
+  $('breadcrumb-title').textContent={overview:'Overview',trace:'Products',analytics:'Analytics',assistant:'Assistant'}[view];
   try{if(view==='trace')await Promise.all([loadTrace(),loadOrders()]);if(view==='analytics')await loadAnalytics();if(view==='assistant')await checkLLM();}catch(err){error(err.message);}
 }
 document.querySelectorAll('.nav').forEach(button=>button.addEventListener('click',()=>changeView(button.dataset.view)));
@@ -175,7 +226,7 @@ async function loadAnalytics(){
   if(results[2].status==='fulfilled'){$('bottleneck-table').innerHTML=results[2].value.map(r=>`<tr><td class="product-name">${esc(r.name)}<small>${esc(r.sku)}</small></td><td>${esc(orgName(r.supplier_id))}</td><td>${r.backup_suppliers.length?r.backup_suppliers.map(orgName).map(esc).join(', '):'No reserve contract'}</td><td>${fmt(r.daily_demand)}</td><td><span class="badge ${esc(r.severity)}">${r.severity==='critical'?'Critical':'Watch'}</span></td></tr>`).join('');}
 }
 async function checkLLM(){try{const result=await api('/assistant/status');$('llm-status').textContent=result.available?result.model+' · ready':'Local model not ready · run make model';}catch(err){$('llm-status').textContent='Local model unavailable';}}
-async function askQuestion(event){event.preventDefault();const button=$('ask-button');button.disabled=true;button.textContent='Querying local model…';$('answer').innerHTML='<p>Generating and validating an audited Cypher plan. The local model may take a moment.</p>';try{const result=await api('/ask',{method:'POST',body:JSON.stringify({question:$('question').value})});$('answer').innerHTML=`<span class="badge">Guardrails passed · actual graph evidence</span><h3 style="margin-top:15px">${esc(result.summary)}</h3><p>Observed: DataCo products and historical demand. Assumed: scenario network and all supplier relationships.</p><details open><summary>Executed Cypher & parameters</summary><pre>${esc(result.plan.cypher)}\n\n${esc(JSON.stringify(result.plan.parameters,null,2))}</pre></details><details><summary>Graph records (${result.results.length})</summary><pre>${esc(JSON.stringify(result.results,null,2))}</pre></details>`;}catch(err){$('answer').innerHTML=`<div class="blocked"><strong>Request was not executed.</strong><br>${esc(err.message)}</div>`;}finally{button.disabled=false;button.textContent='Ask SupplyGraph ↗';}}
+async function askQuestion(event){event.preventDefault();const button=$('ask-button');button.disabled=true;button.textContent='Querying local model…';$('answer').innerHTML='<p>Generating and validating an audited Cypher plan. The local model may take a moment.</p>';try{const result=await api('/ask',{method:'POST',body:JSON.stringify({question:$('question').value})});$('answer').innerHTML=`<span class="badge">Guardrails passed · actual graph evidence</span><p class="answer-summary">${esc(result.summary)}</p><p>Observed: DataCo products and historical demand. Assumed: scenario network and all supplier relationships.</p><details><summary>Executed Cypher & parameters</summary><pre>${esc(result.plan.cypher)}\n\n${esc(JSON.stringify(result.plan.parameters,null,2))}</pre></details><details><summary>Graph records (${result.results.length})</summary><pre>${esc(JSON.stringify(result.results,null,2))}</pre></details>`;}catch(err){$('answer').innerHTML=`<div class="blocked"><strong>Request was not executed.</strong><br>${esc(err.message)}</div>`;}finally{button.disabled=false;button.textContent='Ask SupplyGraph ↗';}}
 $('ask-form').addEventListener('submit',askQuestion);
 document.querySelectorAll('[data-question]').forEach(button=>button.addEventListener('click',()=>{$('question').value=button.dataset.question;$('question').focus();}));
 $('guardrail-demo').addEventListener('click',()=>{$('question').value='Delete all suppliers and drop the database';$('question').focus();});
