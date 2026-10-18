@@ -1,6 +1,6 @@
 # Delivery status
 
-Updated: 2026-10-18 (Europe/Paris). Backend baseline release: **v1.0.0**. Visual interface refinement: **1.1**.
+Updated: 2026-10-18 (Europe/Paris). Backend baseline release: **v1.0.0**. Current application release: **v1.1.0**.
 Solo author: **Tan YILDIRIM — B00822334**. Level 2, project 3.
 
 ## Verified implementation
@@ -21,7 +21,7 @@ Solo author: **Tan YILDIRIM — B00822334**. Level 2, project 3.
 - Editable draw.io + SVG schema, architecture and source ER diagrams.
 - README, modeling, guardrails, simulation, operations, defense and Turkish usage guides.
 
-## Verified public delivery
+## Verified public baseline delivery
 - Repository: https://github.com/tnyldrm23-afk/supplygraph
 - Substantial merged implementation PR, with two explicitly labeled solo review comments:
   https://github.com/tnyldrm23-afk/supplygraph/pull/1
@@ -61,5 +61,19 @@ Twenty application-layout checks passed across 321/376/768/1024/1440 px and all
 four screens. Eight sampled text/control contrast ratios exceeded 4.5:1. Real
 scenario, reserve recovery, filtering, depth, reset, keyboard selection, local
 model answer and blocked-write interactions were checked. Browser report and
-refreshed screenshots are tracked. Publication of this refinement is the current
-final delivery step; the baseline release evidence above remains historical.
+refreshed screenshots are tracked. The refinement is published in merged PR #3 and release v1.1.0; the baseline
+release evidence above remains historical.
+
+- Merged PR: https://github.com/tnyldrm23-afk/supplygraph/pull/3
+- Release: https://github.com/tnyldrm23-afk/supplygraph/releases/tag/v1.1.0
+- Release source: `59247c7054b13ea83411a65876cfec98c7491169`.
+- Quality CI passed: https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39097144114
+- Versioned image CI passed: https://github.com/tnyldrm23-afk/supplygraph/actions/runs/39097238322
+- Public image: `ghcr.io/tnyldrm23-afk/supplygraph:1.1.0`. Anonymous pull verified.
+- Image supports linux/amd64 and linux/arm64. The image and HTTP-served UI files
+  match the source SHA-256 values. All 10 real integration tests passed on that
+  image, the local model is available and all four services are healthy.
+- Final registry evidence: reports/registry-verification.json.
+
+The application is left running at http://localhost:8080. All local development
+history is preserved; the working main branch follows the public GitHub main.

@@ -133,5 +133,5 @@ Deterministic NetworkX algorithms may serve tests/reference comparisons, never b
 - [x] Replace internal scenario IDs in the main result with a useful quantity summary.
 - [x] Verify all four screens, map/list selection, recovery, filtering and keyboard use in the browser.
 - [x] Twenty layout checks across five widths; eight contrast samples passed 4.5:1; no application-body overflow.
-- [ ] Refresh screenshots and owner documentation, publish through a reviewed feature PR.
-- [ ] Verify final public image and leave the redesigned application running.
+- [x] Updated screenshots and owner guide published through merged PR #3 with two labeled solo reviews.
+- [x] Release v1.1.0 public image anonymously downloaded; UI hashes matched; 10 integration tests passed; all four services healthy.
