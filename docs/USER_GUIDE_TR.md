@@ -8,12 +8,12 @@ uygulamanın dağıtılabilir Docker imajını saklar. Packages sayfası simüla
 
 ## İlk deneme
 
-1. **Overview** bölümünde **Atlas Textiles** seç.
+1. **Disruption** sekmesinde **Atlas Textiles** seç.
 2. Kapasite kaybını **%100** bırak ve senaryoyu çalıştır.
 3. Etkilenen ürünleri ve karşılanamayan günlük talebi incele.
 4. Yedekleri açarak toparlanma sonucunu karşılaştır.
-5. Bir ürün seçip **Products** bölümünde geçtiği yolları incele.
-6. **Assistant** bölümünde “Atlas Textiles (SUP-01) kapanırsa ne olur?” diye sor.
+5. Bir ürün seçip **Products** sekmesinde geçtiği yolları incele.
+6. **Ask the graph** sekmesinde “Atlas Textiles (SUP-01) kapanırsa ne olur?” diye sor.
    Cevabın yanında kullanılan Cypher sorgusunu ve kanıtları görebilirsin.
 
 Tam Atlas kesintisi için doğrulanan örnekte 40 ürün etkilenir. Bir ürünün etkilenmesi,
@@ -34,7 +34,7 @@ ayrıca hesaplanır. Sonuçlar seçili kesinti ve yedek ayarlarına bağlıdır.
 | Shortfall / unmet demand | Mevcut talebin karşılanamayan kısmı |
 | Recovery | Yedekler devreye girdiğinde geri kazanılan ürün akışı |
 | Service level | Talebin karşılanabilen yüzdesi |
-| Overview | Kesinti ayarları, ağ ve sonuç karşılaştırması |
+| Disruption | Kesinti ayarları, ağ ve sonuç karşılaştırması |
 | Products | Ürünün kökeni, yolları ve süre bilgileri |
 | Analytics | Ağ bağlantıları ve köprü görevi gören tesisler |
 | Assistant | Doğal dille, izin verilen ağ sorularını sorma |
@@ -83,7 +83,7 @@ Savunmaya hazırlanmak için [DEFENSE.md](DEFENSE.md), model kararları için
 ## Yeni görsel düzen
 
 Üstte dört özet kartı, altında senaryo oluşturucu, ağ ve ürün etkisi bulunur.
-Telefonda menü etiketleri görünür kalır. Ağ dar ekranda **Facilities** listesiyle
+Telefonda menü etiketleri görünür kalır. Ağ dar ekranda **List** görünümüyle
 açılır; **Map** düğmesiyle haritaya geçebilirsin. Harita ve tablolar kendi
 alanlarında yana kaydırılabilir. **Review product impact** bağlantısı doğrudan
 etkilenen ürünlere götürür. Asistanın Cypher ayrıntıları istenince açılır.

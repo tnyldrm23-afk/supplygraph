@@ -1,26 +1,48 @@
-# Interface design — visual refinement
+# Interface design
 
-The owner requested a more professional application with easier visual reading.
-The first interface compressed important labels to 7–9 px on narrow screens and
-hid mobile navigation labels. The revised interface uses a 15 px body, 13–15 px
-controls and table data, readable captions, and a dark navy / blue visual system.
+## Version 1.2 — editorial redesign
 
-The layout follows a decision: overview metrics, scenario inputs, network, product
-impact, then recovery comparison. Scenario results show affected products and
-unmet daily units instead of exposing an internal identifier. Exports retain the
-full scenario record. The service-level bar reflects actual solver output.
+The owner found the 1.1 interface hard to follow and said it looked like a generic
+AI dashboard: a dark navy sidebar, a fake workspace switcher, an "AI" badge, arrow
+icons on every button and marketing slogans ("Your network. Every possibility.",
+"Connected insight. Confident decisions."). Version 1.2 removes all of that and
+reorganises each screen around the question it answers.
 
-The network occupies the full content width. Desktop uses stage columns and clear
-facility cards with keyboard selection. Below 760 px, the default becomes a readable
-facility list; Map and Facilities controls let the user choose either. The map can
-scroll within its own panel. Data tables also scroll within their own panels.
-Recovery information remains available on mobile. Navigation always has text.
+**Staging.** Each view opens with a plain question as its title and one paragraph
+saying what the screen does:
 
-Product, analytics, assistant and methodology screens share typography, cards,
-colors and spacing. Observed and assumed evidence remain visibly distinct. Cypher
-is placed behind an expandable section with a high-contrast code surface. No
-external fonts, images, icon CDN or UI framework are needed.
+| Tab | Title | Purpose |
+|---|---|---|
+| Disruption | What happens when a facility fails? | Scenario set-up, outcome, network, product impact, recovery |
+| Products | Where does a product come from? | Lanes for one SKU; recorded vs modeled delivery time |
+| Analysis | Which facilities hold the network together? | GDS betweenness, WCC, single-source products |
+| Ask the graph | Ask a question in plain language. | Local NL-to-Cypher with visible evidence |
 
-UI-only work does not change the simulation, database, dataset, GDS or LLM boundary.
-Verification is recorded in reports/browser-qa.json with actual viewport checks and
-real interactions; screenshots are captured from the working application.
+**Cause beside effect.** On desktop the scenario controls sit in a sticky column on
+the left, laid out as three numbered steps (facility, capacity lost, backups), with
+exposure depth tucked under *Advanced*. Everything they change — the four-number
+readout, the network map, product impact and the recovery comparison — is on the
+right, so a run and its result are visible together. Below 1080 px the controls move
+above the results; below 760 px the network defaults to a list.
+
+**Visual language.** Warm paper background, white panels with hairline borders,
+no shadows or gradients. One accent (deep teal) marks actions and selection; red
+means disrupted, amber means downstream, green means recovered. Page titles use the
+system serif (Iowan Old Style / Charter / Georgia); everything else uses the system
+sans with tabular figures. The CSP allows no external fonts, so nothing is
+downloaded. Observed and assumed data keep their own colours (blue and purple)
+everywhere they appear.
+
+**Network map.** Four labelled stages, left to right. Cards carry a thin stage-colour
+bar instead of icons; a disrupted card turns red and says by how much, downstream
+cards turn amber and say so in text, and unaffected lanes fade. The legend explains
+the lane and state styles. The map scrolls within its panel on narrow screens.
+
+**Copy.** Labels say what a value is ("Recoverable with backups", "Before / After /
+Lost", "Recorded shipping time" vs "Fastest modeled route"). Buttons say what they
+do ("Run simulation", "Re-run with backups", "Download result as JSON").
+
+UI-only work: the simulation, database, dataset, GDS and LLM boundary are unchanged,
+and every element ID used by the script is preserved. Responsive checks for 1.2 are
+recorded in `reports/browser-qa.json` under `editorial_redesign`; screenshots in
+`docs/screenshots/` were captured from the running application.

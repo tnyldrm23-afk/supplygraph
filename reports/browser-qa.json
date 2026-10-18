@@ -399,5 +399,72 @@
       "Local model success and blocked write were exercised through the redesigned UI.",
       "Temporary responsive viewport override reset to the actual 376 px pane."
     ]
+  },
+  "editorial_redesign": {
+    "checked_at": "2026-10-18",
+    "interface_version": "1.2",
+    "responsive_checks": [
+      {
+        "width": 320,
+        "views": [
+          "overview (after run)",
+          "trace",
+          "analytics",
+          "assistant"
+        ],
+        "maxDocumentWidth": 321,
+        "visibleError": false
+      },
+      {
+        "width": 375,
+        "views": [
+          "overview (after run)",
+          "trace",
+          "analytics",
+          "assistant"
+        ],
+        "maxDocumentWidth": 375,
+        "visibleError": false
+      },
+      {
+        "width": 768,
+        "views": [
+          "overview (after run, map and list)",
+          "trace",
+          "analytics",
+          "assistant"
+        ],
+        "maxDocumentWidth": 768,
+        "visibleError": false
+      },
+      {
+        "width": 1024,
+        "views": [
+          "overview (after run)"
+        ],
+        "maxDocumentWidth": 1024,
+        "visibleError": false
+      },
+      {
+        "width": 1440,
+        "views": [
+          "overview (after run)",
+          "trace",
+          "analytics",
+          "assistant",
+          "method dialog"
+        ],
+        "visibleError": false
+      }
+    ],
+    "observed_checks": [
+      "Atlas Textiles full outage: 40 of 118 products affected, 67.1% demand fulfilled, 112.2 units/day unmet, 60.3 units/day recoverable",
+      "Network map marks the disrupted facility red and 7 downstream facilities amber",
+      "Products view loaded lanes, observed/assumed summary and recorded vs modeled delivery time",
+      "Analysis view loaded real GDS betweenness, WCC and single-source table",
+      "Assistant answered the Atlas Textiles question with Cypher and records; the delete request was rejected with 422 and not executed",
+      "Fixed during QA: results column overflowed at 375 px and 768 px; constrained with minmax(0, 1fr)"
+    ],
+    "screenshots": "docs/screenshots/*.jpg recaptured from the running stack with headless Chrome"
   }
 }
