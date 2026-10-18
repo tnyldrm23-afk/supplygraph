@@ -54,7 +54,7 @@ Source: instructor-spec.md, retrieved 2026-10-17. Repository: https://github.com
 - [x] Disruption, provenance, bottlenecks, alternatives, ETA and graph analytics.
 - [x] Read-only health/diagnostic endpoints; no ingestion or mutation endpoint exposed.
 - [x] Docker Compose >=3 services, health checks, dependency readiness, .env.example.
-- [ ] Public registry image published via GitHub Actions, no secrets in source or images.
+- [x] Public registry image published via GitHub Actions; anonymous pull and runtime verified.
 
 ## M5 — Graph algorithms and ML
 - [x] Explicit organization FLOW projection derived only from scenario-active lanes.
@@ -90,7 +90,7 @@ Source: instructor-spec.md, retrieved 2026-10-17. Repository: https://github.com
 - [x] .pylintrc, pylint >=9.5, PEP8, docstrings and formatting.
 - [x] make help/install/run/docker-run/test/lint/clean and additional data/demo commands.
 - [x] Dependency locks or pinned tested dependencies; clean install validation.
-- [ ] GitHub Actions lint/test/integration, badges and container publishing (configured; remote run/publication pending).
+- [x] GitHub Actions lint/test/integration, badges and container publishing; remote runs succeeded.
 - [x] No credentials or customer personal data tracked; inspect final git diff.
 
 ## M9 — Documentation and defense
@@ -104,11 +104,12 @@ Source: instructor-spec.md, retrieved 2026-10-17. Repository: https://github.com
 - [x] Solo contribution statement; no fabricated team collaboration evidence.
 
 ## M10 — Release and evidence audit
-- [ ] Feature branch(es), substantial PR, honest self-review and merged PR evidence.
+- [x] Feature branch, substantial merged PR #1, two honest solo self-review comments and screenshot.
 - [x] Final required Make targets pass locally; verification evidence recorded.
 - [x] Final browser verification and exported screenshots.
-- [ ] Remote GitHub tree, CI run, published image and README verified.
-- [ ] Release tag, clean git state and local application left runnable.
+- [x] Remote implementation tree hash checked, main CI passed and public image ran successfully.
+- [x] Release tag v1.0.0 published; local application left running and healthy.
+- [x] Final evidence bundle prepared for publication; release and implementation history retained.
 - [x] Rubric audit distinguishes implemented, locally verified and externally pending evidence.
 
 ## Acceptance gates

@@ -1,5 +1,6 @@
 PYTHON ?= python3.12
 VENV := .venv/bin
+INTEGRATION ?= 0
 .DEFAULT_GOAL := help
 .PHONY: help setup venv install run docker-build docker-run docker-stop model test test-integration lint format clean data seed benchmark ml demo verify
 help: ## Show project commands
@@ -22,6 +23,7 @@ model: ## Pull the configured local LLM (about 1 GB, first run only)
 	$(VENV)/python scripts/pull_model.py
 test: ## Run unit/API/security tests and produce coverage report
 	$(VENV)/pytest -q -m 'not integration' --cov=app --cov-report=term-missing --cov-report=xml:reports/coverage.xml
+	@if [ "$(INTEGRATION)" = "1" ]; then $(MAKE) test-integration; fi
 test-integration: ## Test real Neo4j, Cypher, GDS and container-facing API
 	$(VENV)/pytest -q -m integration
 lint: ## Require pylint >=9.5 for application code

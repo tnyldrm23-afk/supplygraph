@@ -2,7 +2,9 @@
 
 Author: Tan YILDIRIM — B00822334. AI-assisted implementation and verification.
 This is a documented self-review, not an independent teammate review.
-The final GitHub PR should link this review and the verification evidence.
+The [merged implementation PR #1](https://github.com/tnyldrm23-afk/supplygraph/pull/1)
+links the verification evidence and includes two explicitly labeled constructive
+solo review comments covering quantity/flow correctness and the LLM boundary.
 
 ## Comment 1 — Preserve quantity across repeated order/SKU lines
 **Finding:** Source order IDs repeat and distinct line IDs can share the same SKU.
