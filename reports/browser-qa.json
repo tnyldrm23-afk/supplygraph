@@ -497,5 +497,25 @@
       "Phones: map moves above the controls and becomes a swipeable 760 px canvas centred on Europe",
       "prefers-reduced-motion disables flow, ripple, counters and entrance animations"
     ]
+  },
+  "story_page": {
+    "checked_at": "2026-10-19",
+    "interface_version": "1.4",
+    "url": "/",
+    "desktop_1440": {
+      "docWidth": 1440,
+      "pageViewportHeights": 5.7,
+      "stickyElements": 0,
+      "jsExceptions": 0,
+      "labelCards": 8
+    },
+    "observed_checks": [
+      "Slider at 60% capacity: 89.8% delivered, 40 products short in New York (solver)",
+      "Take it offline steps to 0%: 67.1% delivered, shortfall reaches Paris, London and New York; button offers Start again",
+      "Story console for Porto Works at 50% with backups opens /app.html?facility=MFG-01&reduction=50&backups=1&run=1 and the simulator runs it (40 affected)",
+      "/app.html#analytics opens the analysis view directly",
+      "Owner rejected scroll-driven capacity and the pinned horizontal rail; both removed"
+    ],
+    "app_regression": "320-1440 px, four views after a scenario run: no overflow, no JS exceptions"
   }
 }

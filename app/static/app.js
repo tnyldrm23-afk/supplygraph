@@ -146,73 +146,11 @@ function renderFacilityList(failures, exposed, selectedId) {
   });
 }
 
-/* World map (projection matches scripts that generated land.svg) */
-const GEO = { width: 1060, height: 359, lon0: -84, lon1: 124, latTop: 60 };
-const GEO_K = GEO.width / ((GEO.lon1 - GEO.lon0) * Math.PI / 180);
-const merc = lat => Math.log(Math.tan(Math.PI / 4 + Math.max(-80, Math.min(84, lat)) * Math.PI / 360));
-const GEO_Y0 = merc(GEO.latTop);
-const project = (lon, lat) => [GEO_K * (lon - GEO.lon0) * Math.PI / 180, GEO_K * (GEO_Y0 - merc(lat))];
-// [text-anchor, dx, dy] chosen by hand so the crowded European labels never overlap
-const cityLabel = {'LOC-PT': ['end', -20, 4], 'LOC-GB': ['end', -10, 0], 'LOC-NL': ['start', 9, 13], 'LOC-DE': ['start', 10, -3], 'LOC-FR': ['start', 9, 8], 'LOC-TR': ['start', 15, 4], 'LOC-VN': ['end', -15, 4], 'LOC-US': ['start', 15, 4]};
-const geoColor = {supplier: 'var(--geo-supplier)', manufacturer: 'var(--geo-manufacturer)', distributor: 'var(--geo-distributor)', retailer: 'var(--geo-retailer)'};
-const stageOrder = Object.keys(kindStyle);
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-function geoPositions() {
-  const positions = {};
-  state.graph.locations.forEach(location => {
-    const [x, y] = project(location.longitude, location.latitude);
-    const here = state.organizations.filter(o => o.location_id === location.id)
-      .sort((a, b) => stageOrder.indexOf(a.kind) - stageOrder.indexOf(b.kind));
-    here.forEach((o, i) => { positions[o.id] = [x + (i - (here.length - 1) / 2) * 10, y]; });
-  });
-  return positions;
-}
-function arcPath([x1, y1], [x2, y2]) {
-  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
-  if (len < 14) return `M${x1},${y1} L${x2},${y2}`;
-  let nx = -dy / len, ny = dx / len;
-  if (ny > 0) { nx = -nx; ny = -ny; }
-  const lift = Math.min(90, len * .22);
-  return `M${x1},${y1} Q${(x1 + x2) / 2 + nx * lift},${(y1 + y2) / 2 + ny * lift} ${x2},${y2}`;
-}
-/* options: edges [{origin, destination, backup, cls, flow, delay}], node(id) -> {cls, delay, radius, label}, selected, animate */
+/* World map: drawing lives in geo.js, shared with the scroll story */
+const reducedMotion = SupplyGeo.reducedMotion;
 function drawGeo(svg, options) {
   if (!state.graph) return;
-  svg.replaceChildren();
-  const box = svg.parentElement;
-  if (box.scrollWidth > box.clientWidth && !box.dataset.centered) { box.scrollLeft = (box.scrollWidth - box.clientWidth) * .42; box.dataset.centered = '1'; }
-  svg.classList.toggle('animate', Boolean(options.animate) && !reducedMotion.matches);
-  svg.append(svgElement('image', {href: '/land.svg', x: 0, y: 0, width: GEO.width, height: GEO.height, class: 'geo-land'}));
-  const pos = geoPositions();
-  options.edges.forEach(edge => {
-    const a = pos[edge.origin], b = pos[edge.destination];
-    if (!a || !b) return;
-    const d = arcPath(a, b), style = `--d:${edge.delay || 0}ms`;
-    const lane = svgElement('path', {d, class: `geo-lane ${edge.backup ? 'backup ' : ''}${edge.cls || ''}`, style});
-    lane.append(svgElement('title', {}, `${orgName(edge.origin)} → ${orgName(edge.destination)}${edge.backup ? ' (backup lane)' : ''}`));
-    svg.append(lane);
-    if (edge.flow) svg.append(svgElement('path', {d, class: `geo-flow ${edge.backup ? 'backup ' : ''}${edge.cls || ''}`, style}));
-  });
-  state.graph.nodes.forEach(node => {
-    const p = pos[node.id]; if (!p) return;
-    const info = options.node ? options.node(node.id) : {};
-    const r = info.radius || 4.2;
-    const g = svgElement('g', {class: `geo-node ${info.cls || ''}`, transform: `translate(${p[0]},${p[1]})`, style: `--d:${info.delay || 0}ms`});
-    g.append(svgElement('title', {}, `${node.name} · ${node.kind}${info.note ? ' · ' + info.note : ''}`));
-    g.append(svgElement('circle', {r: r + 6, class: 'halo', fill: geoColor[node.kind]}));
-    if (info.cls?.includes('failed')) g.append(svgElement('circle', {r: r + 2, class: 'geo-pulse'}));
-    g.append(svgElement('circle', {r, class: 'core', fill: geoColor[node.kind]}));
-    if (options.selected === node.id) g.append(svgElement('circle', {r: r + 4, class: 'select-ring'}));
-    if (info.label) g.append(svgElement('text', {x: 0, y: -r - 6, 'text-anchor': 'middle', class: 'geo-score'}, info.label));
-    if (options.onSelect) g.addEventListener('click', () => options.onSelect(node.id));
-    svg.append(g);
-  });
-  state.graph.locations.forEach(location => {
-    const [x, y] = project(location.longitude, location.latitude);
-    const [anchor, dx, dy] = cityLabel[location.id] || ['start', 10, 4];
-    const push = options.labelPush?.(location.id) || 0;
-    svg.append(svgElement('text', {x: x + dx + Math.sign(dx) * push, y: y + dy, 'text-anchor': anchor, class: 'geo-city'}, location.name));
-  });
+  SupplyGeo.draw(svg, {graph: state.graph, organizations: state.organizations}, options);
 }
 function renderOverviewMap(animate = false) {
   const { failures, exposed, active, backups } = scenarioSets();
@@ -268,15 +206,15 @@ function baseline() {
   animateNumber('metric-service', state.overview.baseline_service_level);
   updateServiceTrack(state.overview.baseline_service_level);
   animateNumber('metric-products', 0, 0); animateNumber('metric-loss', 0); animateNumber('metric-recovery', 0);
-  $('stage-caption').textContent = 'Baseline — goods moving on every primary lane'; $('stage-caption').className = '';
-  $('service-change').textContent = 'Baseline — no disruption'; $('service-change').className = 'neutral';
+  $('stage-caption').textContent = 'Baseline: goods moving on every primary lane'; $('stage-caption').className = '';
+  $('service-change').textContent = 'Baseline, no disruption'; $('service-change').className = 'neutral';
   $('product-change').textContent = 'No disruption applied'; $('product-change').className = 'neutral';
   $('loss-change').textContent = `All ${fmt(state.overview.daily_demand)} units/day delivered`;
   $('scenario-result').hidden = true; $('impact-count').textContent = 'No scenario';
   $('impact-subtitle').textContent = 'Run a simulation to see which products lose supply.';
   $('impact-table').innerHTML = '<tr><td colspan="5" class="table-empty">Nothing simulated yet. Choose a facility and press Run simulation.</td></tr>';
   $('table-count').textContent = 'Units per day. Each product has its own capacity, so nothing is double-counted.';
-  $('graph-caption').textContent = 'Baseline — every lane available';
+  $('graph-caption').textContent = 'Baseline: every lane available';
   $('bar-scenario').style.width = '100%'; $('bar-recovery').style.width = '100%';
   $('bar-scenario-value').textContent = '100%'; $('bar-recovery-value').textContent = '100%';
   $('recovery-heading').textContent = 'How much can backups win back?';
@@ -302,7 +240,7 @@ function renderScenario() {
   $('metric-product-total').textContent = '/ ' + s.products.length;
   animateNumber('metric-loss', t.unmet_demand); animateNumber('metric-recovery', t.restored_with_backups);
   const downstream = s.exposed_organizations.filter(o => o.hops > 0).length;
-  $('stage-caption').textContent = pct === 0 ? `${name} at full capacity — nothing changes` : `${name} loses ${pct}% of capacity — the shortfall reaches ${plural(downstream, 'facility', 'facilities')} downstream`;
+  $('stage-caption').textContent = pct === 0 ? `${name} at full capacity: nothing changes` : `${name} loses ${pct}% of capacity. The shortfall reaches ${plural(downstream, 'facility', 'facilities')} downstream`;
   $('stage-caption').className = pct > 0 ? 'alert' : '';
   const delta = t.service_level - t.baseline_service_level;
   $('service-change').textContent = delta === 0 ? 'Unchanged from baseline' : `${delta > 0 ? '+' : '−'}${fmt(Math.abs(delta))} points vs baseline`;
@@ -378,7 +316,7 @@ async function changeView(view) {
     el.classList.toggle('active', el.dataset.view === view);
     if (el.dataset.view === view) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
-  document.title = `SupplyGraph — ${viewTitles[view]}`;
+  document.title = `SupplyGraph · ${viewTitles[view]}`;
   window.scrollTo({top: 0});
   try {
     if (view === 'trace') await Promise.all([loadTrace(), loadOrders()]);
@@ -443,7 +381,7 @@ async function loadAnalytics() {
 async function checkLLM() {
   try {
     const result = await api('/assistant/status');
-    $('llm-status').textContent = result.available ? `${result.model} · ready` : 'Model not downloaded — run make model';
+    $('llm-status').textContent = result.available ? `${result.model} · ready` : 'Model not downloaded: run make model';
   } catch (err) { $('llm-status').textContent = 'Local model unavailable'; }
 }
 async function askQuestion(event) {
@@ -473,6 +411,7 @@ async function initialize() {
     $('system-status').innerHTML = '<i></i>Connected';
     $('gds-version').textContent = 'Neo4j GDS ' + (health.gds || 'unavailable');
     baseline(); facilityInfo();
+    applyLink();
   } catch (err) {
     $('system-status').className = 'status offline';
     $('system-status').innerHTML = '<i></i>Offline';
@@ -480,4 +419,18 @@ async function initialize() {
     $('run-button').disabled = true;
   }
 }
+/* Deep links: /app.html#trace opens a view; ?facility=SUP-01&reduction=100&backups=1&run=1
+   (sent by the scroll story's controls) prefills the scenario and runs it. */
+function applyLink() {
+  const query = new URLSearchParams(location.search);
+  const facility = query.get('facility');
+  if (facility && state.organizations.some(o => o.id === facility)) { $('supplier-select').value = facility; facilityInfo(); renderGraph(); }
+  const reduction = Number(query.get('reduction'));
+  if (query.has('reduction') && reduction >= 0 && reduction <= 100) { $('reduction').value = reduction; $('reduction-value').textContent = `${reduction}%`; }
+  if (query.get('backups') === '1') $('backups').checked = true;
+  const view = location.hash.slice(1);
+  if (viewTitles[view] && view !== 'overview') changeView(view);
+  else if (query.get('run') === '1') runScenario();
+}
+addEventListener('hashchange', () => { const view = location.hash.slice(1); if (viewTitles[view]) changeView(view); });
 initialize();
