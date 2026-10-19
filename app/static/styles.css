@@ -1,5 +1,7 @@
 /* SupplyGraph — interface styles.
    One quiet palette, one accent, system fonts only (the CSP allows no external fonts). */
+@font-face { font-family: "Geist"; src: url("/fonts/geist.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Geist Mono"; src: url("/fonts/geist-mono.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
 :root {
   color-scheme: light;
   --bg: #f5f3ee;
@@ -24,22 +26,10 @@
   --assumed: #6b4a85;
   --assumed-soft: #efe8f4;
   --radius: 10px;
-  --night: #0d1a1b;
-  --night-2: #132527;
-  --night-line: rgb(190 222 214 / .12);
-  --night-ink: #f1eee6;
-  --night-muted: #93aba6;
-  --geo-supplier: #8ab2ff;
-  --geo-manufacturer: #eeb072;
-  --geo-distributor: #b7d98a;
-  --geo-retailer: #e2a6ec;
-  --geo-flow: #8fe9d8;
-  --geo-failed: #ff6f5e;
-  --geo-affected: #f7bd4f;
-  --geo-backup: #74d99b;
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --serif: "Iowan Old Style", "Charter", "Palatino Linotype", Palatino, Georgia, serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Display uses the same family as text (one family, weight for emphasis). */
+  --serif: var(--sans);
+  --mono: "Geist Mono", ui-monospace, Menlo, monospace;
 }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 80px; }
@@ -79,7 +69,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 36px 32px 24px; }
 .page-intro { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 28px; }
 .page-intro > div:first-child { max-width: 860px; }
 .kicker { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-h1 { font-family: var(--serif); font-size: clamp(32px, 3.2vw, 44px); font-weight: 600; line-height: 1.15; letter-spacing: -.01em; }
+h1 { font-family: var(--serif); font-size: clamp(32px, 3.2vw, 44px); font-weight: 600; line-height: 1.1; letter-spacing: -.03em; text-wrap: balance; }
 .lede { margin-top: 12px; color: var(--ink-2); font-size: 16px; line-height: 1.6; max-width: 70ch; }
 h2 { font-size: 17px; font-weight: 650; line-height: 1.35; letter-spacing: -.005em; }
 h3 { font-size: 15px; font-weight: 650; }
@@ -175,41 +165,6 @@ input[type=range] { width: 100%; margin: 6px 0 2px; accent-color: var(--accent);
 .stage-compact .stage-map { margin-bottom: 4px; }
 .stage-compact .stage-map svg { height: min(40vw, 470px); }
 
-.geo-land { opacity: .5; }
-.geo-city { pointer-events: none; fill: #c9dad6; font-size: 11.5px; font-weight: 500; letter-spacing: .02em; paint-order: stroke; stroke: var(--night); stroke-width: 3px; stroke-linejoin: round; }
-.geo-lane { fill: none; stroke: rgb(159 205 196 / .3); stroke-width: 1.2; }
-.geo-lane.backup { stroke-dasharray: 3 4; stroke: rgb(116 217 155 / .3); }
-.geo-flow { fill: none; stroke: var(--geo-flow); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1.5 11; animation: geo-flow 1.4s linear infinite; opacity: .9; }
-.geo-flow.backup { stroke: var(--geo-backup); }
-.geo-lane.failed { stroke: var(--geo-failed); stroke-width: 1.6; stroke-dasharray: 4 4; opacity: .85; }
-.geo-lane.affected { stroke: rgb(247 189 79 / .55); }
-.geo-flow.affected { stroke: var(--geo-affected); animation-duration: 2.6s; }
-.geo-lane.faded, .geo-flow.faded { opacity: .22; }
-.geo-lane.muted { opacity: .1; }
-@keyframes geo-flow { to { stroke-dashoffset: -25; } }
-.geo-node { cursor: pointer; }
-.geo-node .halo { opacity: .22; }
-.geo-node .core { stroke: var(--night); stroke-width: 1.5; }
-.geo-node:hover .halo { opacity: .45; }
-.geo-node.muted { opacity: .28; }
-.geo-node .select-ring { fill: none; stroke: #fff; stroke-width: 1.5; }
-.geo-node.failed .core { fill: var(--geo-failed); }
-.geo-node.failed .halo { fill: var(--geo-failed); opacity: .35; }
-.geo-node.affected .core { fill: var(--geo-affected); }
-.geo-node.affected .halo { fill: var(--geo-affected); opacity: .3; }
-.geo-pulse { fill: none; stroke: var(--geo-failed); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: geo-pulse 2s ease-out infinite; }
-@keyframes geo-pulse { from { transform: scale(.6); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
-.geo-score { pointer-events: none; fill: var(--night-ink); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--night); stroke-width: 3px; }
-/* Ripple: played once when a new scenario arrives */
-.animate .geo-node.failed .core, .animate .geo-node.affected .core { animation: geo-node-in .5s ease both; animation-delay: var(--d); }
-.animate .geo-node.affected .halo, .animate .geo-node.failed .halo { animation: geo-halo-in .9s ease-out both; animation-delay: var(--d); }
-.animate .geo-lane.failed, .animate .geo-lane.affected { animation: geo-lane-in .6s ease both; animation-delay: var(--d); }
-.animate .geo-flow.affected, .animate .geo-lane.faded, .animate .geo-flow.faded { animation-delay: var(--d); }
-.animate .geo-lane.faded { animation: geo-fade .8s ease both; animation-delay: var(--d); }
-@keyframes geo-node-in { from { fill: #9fc3bd; } }
-@keyframes geo-halo-in { 0% { r: 4; opacity: .9; } 60% { opacity: .5; } }
-@keyframes geo-lane-in { from { stroke: rgb(159 205 196 / .3); opacity: 1; } }
-@keyframes geo-fade { from { opacity: 1; } }
 
 .readout { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 12px 12px; border-radius: 10px; background: rgb(255 255 255 / .045); border: 1px solid var(--night-line); backdrop-filter: blur(6px); }
 .metric { padding: 16px 18px; min-width: 0; }

@@ -1,0 +1,51 @@
+/* Shared world map styles (app and scroll story). */
+:root {
+  --night: #0d1a1b;
+  --night-2: #132527;
+  --night-line: rgb(190 222 214 / .12);
+  --night-ink: #f1eee6;
+  --night-muted: #93aba6;
+  --geo-supplier: #8ab2ff;
+  --geo-manufacturer: #eeb072;
+  --geo-distributor: #b7d98a;
+  --geo-retailer: #e2a6ec;
+  --geo-flow: #8fe9d8;
+  --geo-failed: #ff6f5e;
+  --geo-affected: #f7bd4f;
+  --geo-backup: #74d99b;
+}
+.geo-land { opacity: .5; }
+.geo-city { pointer-events: none; fill: #c9dad6; font-size: 11.5px; font-weight: 500; letter-spacing: .02em; paint-order: stroke; stroke: var(--night); stroke-width: 3px; stroke-linejoin: round; }
+.geo-lane { fill: none; stroke: rgb(159 205 196 / .3); stroke-width: 1.2; }
+.geo-lane.backup { stroke-dasharray: 3 4; stroke: rgb(116 217 155 / .3); }
+.geo-flow { fill: none; stroke: var(--geo-flow); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1.5 11; animation: geo-flow 1.4s linear infinite; opacity: .9; }
+.geo-flow.backup { stroke: var(--geo-backup); }
+.geo-lane.failed { stroke: var(--geo-failed); stroke-width: 1.6; stroke-dasharray: 4 4; opacity: .85; }
+.geo-lane.affected { stroke: rgb(247 189 79 / .55); }
+.geo-flow.affected { stroke: var(--geo-affected); animation-duration: 2.6s; }
+.geo-lane.faded, .geo-flow.faded { opacity: .22; }
+.geo-lane.muted { opacity: .1; }
+@keyframes geo-flow { to { stroke-dashoffset: -25; } }
+.geo-node { cursor: pointer; }
+.geo-node .halo { opacity: .22; }
+.geo-node .core { stroke: var(--night); stroke-width: 1.5; }
+.geo-node:hover .halo { opacity: .45; }
+.geo-node.muted { opacity: .28; }
+.geo-node .select-ring { fill: none; stroke: #fff; stroke-width: 1.5; }
+.geo-node.failed .core { fill: var(--geo-failed); }
+.geo-node.failed .halo { fill: var(--geo-failed); opacity: .35; }
+.geo-node.affected .core { fill: var(--geo-affected); }
+.geo-node.affected .halo { fill: var(--geo-affected); opacity: .3; }
+.geo-pulse { fill: none; stroke: var(--geo-failed); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: geo-pulse 2s ease-out infinite; }
+@keyframes geo-pulse { from { transform: scale(.6); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
+.geo-score { pointer-events: none; fill: var(--night-ink); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--night); stroke-width: 3px; }
+/* Ripple: played once when a new scenario arrives */
+.animate .geo-node.failed .core, .animate .geo-node.affected .core { animation: geo-node-in .5s ease both; animation-delay: var(--d); }
+.animate .geo-node.affected .halo, .animate .geo-node.failed .halo { animation: geo-halo-in .9s ease-out both; animation-delay: var(--d); }
+.animate .geo-lane.failed, .animate .geo-lane.affected { animation: geo-lane-in .6s ease both; animation-delay: var(--d); }
+.animate .geo-flow.affected, .animate .geo-lane.faded, .animate .geo-flow.faded { animation-delay: var(--d); }
+.animate .geo-lane.faded { animation: geo-fade .8s ease both; animation-delay: var(--d); }
+@keyframes geo-node-in { from { fill: #9fc3bd; } }
+@keyframes geo-halo-in { 0% { r: 4; opacity: .9; } 60% { opacity: .5; } }
+@keyframes geo-lane-in { from { stroke: rgb(159 205 196 / .3); opacity: 1; } }
+@keyframes geo-fade { from { opacity: 1; } }

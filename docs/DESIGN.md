@@ -1,5 +1,24 @@
 # Interface design
 
+## Version 1.4: story page and simulator split (scroll-craft skill)
+
+`/` is now a one-page story built with the scroll-craft skill's method (brief,
+feeling curve, grammar, signature move; see `docs/scrollcraft/`). Grammar: *live
+surface*, so the page is the product running on real API data, with the app's tab
+strip on top and a live status bar at the bottom. The simulator moved to
+`/app.html`; the story's closing console deep-links into it
+(`?facility=&reduction=&backups=&run=1`) and the simulator runs that scenario.
+`/app.html#trace`, `#analytics` and `#assistant` open a view directly.
+
+The first story build used pinned, scroll-driven sections. The owner rejected them,
+so the page now scrolls normally: the capacity dial is a slider with a "Take it
+offline" button, and the products that stay short are a grid. Following the skill's
+taste floor, the whole UI now uses Geist (served locally) instead of a system serif,
+and visible em dashes were removed. The skill's engine script was not vendored; the
+page uses its own small script. Map code is shared by both pages via `geo.js` and
+`geo.css`.
+
+
 ## Version 1.3 — the world map
 
 The owner asked for an interface that makes people say "wow" without losing the

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <title>SupplyGraph · Disruption simulator</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/geo.css?v=1.4.0">
+  <link rel="stylesheet" href="/styles.css?v=1.4.0">
+  <script src="/geo.js?v=1.4.0" defer></script>
+  <script src="/app.js?v=1.4.0" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="wordmark" href="/" aria-label="SupplyGraph story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h6M5 6v12M11 6l8 6M5 18h6m0 0 8-6"/><circle cx="5" cy="6" r="2.2"/><circle cx="11" cy="6" r="2.2"/><circle cx="19" cy="12" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="11" cy="18" r="2.2"/></svg>SupplyGraph</a>
+    <nav class="tabs" aria-label="Main navigation">
+      <button class="nav active" data-view="overview" aria-current="page">Disruption</button>
+      <button class="nav" data-view="trace">Products</button>
+      <button class="nav" data-view="analytics">Analysis</button>
+      <button class="nav" data-view="assistant">Ask the graph</button>
+    </nav>
+    <div class="masthead-meta">
+      <span id="system-status" class="status" role="status"><i></i>Connecting</span>
+      <button class="meta-link" id="method-button" type="button">Method</button>
+      <a class="meta-link" href="/docs" target="_blank" rel="noopener">API</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div id="global-error" class="error-banner" role="alert" hidden></div>
+
+  <!-- Disruption simulator -->
+  <section id="view-overview" class="view" aria-labelledby="overview-title">
+    <header class="page-intro">
+      <div>
+        <p class="kicker">Disruption simulator</p>
+        <h1 id="overview-title">What happens when a facility fails?</h1>
+        <p class="lede">Choose a facility in the distribution network, take away some or all of its capacity, and SupplyGraph recalculates how much daily product demand can still reach the retailers.</p>
+      </div>
+      <dl class="evidence-key" aria-label="How to read the data">
+        <div><dt><span class="evidence-tag observed">Observed</span></dt><dd>Products and historical demand from DataCo v5</dd></div>
+        <div><dt><span class="evidence-tag assumed">Assumed</span></dt><dd>Facilities, lanes, capacities and backups</dd></div>
+        <div class="evidence-more"><button class="link-button" id="notice-method" type="button">How the model works</button></div>
+      </dl>
+    </header>
+
+    <div class="sim-layout">
+      <aside class="panel controls" aria-labelledby="controls-title">
+        <h2 id="controls-title">Set up a scenario</h2>
+        <form id="scenario-form">
+          <div class="step">
+            <span class="step-num" aria-hidden="true">1</span>
+            <div class="step-body">
+              <label class="field-label" for="supplier-select">Facility</label>
+              <select id="supplier-select" required></select>
+              <p id="facility-info" class="field-note"></p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num" aria-hidden="true">2</span>
+            <div class="step-body">
+              <div class="range-heading"><label class="field-label" for="reduction">Capacity lost</label><output id="reduction-value" for="reduction">100%</output></div>
+              <input id="reduction" type="range" min="0" max="100" value="100" step="5">
+              <div class="range-labels"><span>None</span><span>Full outage</span></div>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num" aria-hidden="true">3</span>
+            <div class="step-body">
+              <label class="toggle-row"><span><strong>Use backup contracts</strong><small>Switch on reserve suppliers where they exist</small></span><input id="backups" type="checkbox" role="switch"><span class="toggle" aria-hidden="true"></span></label>
+            </div>
+          </div>
+          <details class="advanced">
+            <summary>Advanced</summary>
+            <label class="field-label" for="depth">Exposure depth</label>
+            <select id="depth"><option value="6">6 hops (whole network)</option><option value="3">3 hops</option><option value="2">2 hops</option><option value="1">1 hop (direct customers only)</option></select>
+            <p class="field-note">Limits how far downstream facilities are listed as exposed. The flow calculation always uses the whole network.</p>
+          </details>
+          <div class="scenario-actions">
+            <button class="button primary" type="submit" id="run-button">Run simulation</button>
+            <button class="button ghost" type="button" id="baseline-button">Reset</button>
+          </div>
+        </form>
+        <div id="scenario-result" class="scenario-result" aria-live="polite" hidden></div>
+        <div class="controls-foot">
+          <p>Simulations are read-only. The stored network never changes.</p>
+          <button class="link-button" id="export-button" type="button">Download result as JSON</button>
+        </div>
+      </aside>
+
+      <div class="sim-results">
+        <section class="stage" aria-labelledby="stage-title">
+          <div class="stage-head">
+            <div>
+              <h2 id="stage-title">Where the goods flow</h2>
+              <p id="stage-caption">Baseline: goods moving on every primary lane</p>
+            </div>
+            <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li><li class="state"><i class="ring failed"></i>Disrupted</li><li class="state"><i class="ring affected"></i>Downstream</li>
+            </ul>
+          </div>
+          <div class="stage-map"><svg id="geo-map" viewBox="0 0 1060 359" role="img" aria-label="World map of the modeled network. Facilities sit at their assumed cities; animated lines show goods moving along lanes."></svg></div>
+          <div class="readout" aria-label="Scenario outcome" aria-live="polite">
+          <article class="metric metric-lead">
+            <h3 class="metric-label">Demand fulfilled</h3>
+            <p class="metric-value"><span id="metric-service">0</span><small>%</small></p>
+            <div class="service-track" aria-hidden="true"><span id="service-spark" style="width:100%"></span></div>
+            <p class="metric-foot"><span id="service-change" class="neutral">Baseline</span></p>
+          </article>
+          <article class="metric">
+            <h3 class="metric-label">Products affected</h3>
+            <p class="metric-value"><span id="metric-products">0</span><small id="metric-product-total">/ 118</small></p>
+            <p class="metric-foot"><span id="product-change" class="neutral">No disruption applied</span></p>
+          </article>
+          <article class="metric">
+            <h3 class="metric-label">Unmet demand</h3>
+            <p class="metric-value"><span id="metric-loss">0</span><small>units/day</small></p>
+            <p class="metric-foot"><span id="loss-change" class="neutral">Network intact</span></p>
+          </article>
+          <article class="metric">
+            <h3 class="metric-label">Recoverable with backups</h3>
+            <p class="metric-value"><span id="metric-recovery">0</span><small>units/day</small></p>
+            <p class="metric-foot"><span class="neutral">From reserve contracts</span></p>
+          </article>
+          </div>
+        </section>
+
+        <section class="panel network-panel" aria-labelledby="network-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="network-title">Network diagram <span class="count" id="facility-count">13 facilities</span></h2>
+              <p>Goods move left to right, from suppliers to retailers. Click a facility to select it.</p>
+            </div>
+            <div class="network-toolbar">
+              <div class="view-switch" role="group" aria-label="Network display"><button type="button" data-network-view="map" aria-pressed="true">Map</button><button type="button" data-network-view="list" aria-pressed="false">List</button></div>
+              <label class="sr-only" for="graph-product">Filter network by product</label>
+              <select id="graph-product"><option value="">All products</option></select>
+              <button id="reset-graph" class="icon-button" type="button" title="Clear product filter and scenario" aria-label="Clear product filter and scenario"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v4.5h4.5"/></svg></button>
+            </div>
+          </div>
+          <div class="graph-wrap" id="graph-wrap" data-mode="auto">
+            <div class="graph-scroll"><svg id="network-graph" viewBox="0 0 1060 400" role="group" aria-label="Supply network. Select a facility to use it in the scenario."></svg></div>
+            <div id="network-list" class="network-list"></div>
+          </div>
+          <div class="network-footer">
+            <p id="graph-caption" class="graph-caption">Baseline: every lane available</p>
+            <ul class="graph-legend" aria-label="Legend">
+              <li><i class="legend-line primary"></i>Primary lane</li>
+              <li><i class="legend-line backup"></i>Backup lane</li>
+              <li><i class="legend-swatch failed"></i>Disrupted</li>
+              <li><i class="legend-swatch affected"></i>Downstream</li>
+            </ul>
+          </div>
+        </section>
+
+        <div class="results-grid">
+          <section class="panel impact-panel" id="product-impact" aria-labelledby="impact-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="impact-title">Product impact <span class="count" id="impact-count">No scenario</span></h2>
+                <p id="impact-subtitle">Run a simulation to see which products lose supply.</p>
+              </div>
+              <button class="link-button" id="all-products-button" type="button">Show all products</button>
+            </div>
+            <div class="table-scroll" tabindex="0" role="region" aria-label="Product impact table">
+              <table>
+                <thead><tr><th>Product</th><th class="num">Before</th><th class="num">After</th><th class="num">Lost</th><th>Still delivered</th></tr></thead>
+                <tbody id="impact-table"><tr><td colspan="5" class="table-empty">Nothing simulated yet.</td></tr></tbody>
+              </table>
+            </div>
+            <p class="table-footer" id="table-count">Units per day. Each product has its own capacity, so nothing is double-counted.</p>
+          </section>
+
+          <section class="panel recovery-panel" aria-labelledby="recovery-heading">
+            <p class="kicker">Recovery</p>
+            <h2 id="recovery-heading">How much can backups win back?</h2>
+            <p id="recovery-copy">Run a disruption, then compare it with reserve contracts switched on.</p>
+            <div class="recovery-bars">
+              <div><span>Before</span><b><i id="bar-baseline" style="width:100%"></i></b><strong>100%</strong></div>
+              <div><span>Disrupted</span><b><i id="bar-scenario" class="bar-scenario" style="width:100%"></i></b><strong id="bar-scenario-value">100%</strong></div>
+              <div><span>With backups</span><b><i id="bar-recovery" class="bar-recovery" style="width:100%"></i></b><strong id="bar-recovery-value">100%</strong></div>
+            </div>
+            <button class="button secondary" id="recovery-button" type="button">Re-run with backups</button>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section id="view-trace" class="view" aria-labelledby="trace-title" hidden>
+    <header class="page-intro">
+      <div>
+        <p class="kicker">Products</p>
+        <h1 id="trace-title">Where does a product come from?</h1>
+        <p class="lede">Pick a product to see every lane it travels on, how much each lane can carry and how long it takes. The product and its demand are real; the lanes are modeled.</p>
+      </div>
+    </header>
+    <section class="stage stage-compact" aria-labelledby="trace-stage-title">
+      <div class="stage-head">
+        <div><h2 id="trace-stage-title">Route on the map</h2><p id="trace-caption">Pick a product below.</p></div>
+        <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li><li class="state"><i class="dash"></i>Backup lane</li>
+            </ul>
+      </div>
+      <div class="stage-map"><svg id="trace-map" viewBox="0 0 1060 359" role="img" aria-label="World map highlighting the facilities and lanes that carry the selected product."></svg></div>
+    </section>
+    <section class="panel">
+      <div class="panel-heading">
+        <div><h2>Supply lanes</h2><p>Every contract that can carry the selected product.</p></div>
+        <label class="inline-field"><span>Product</span><select id="trace-product"></select></label>
+      </div>
+      <div id="trace-summary" class="trace-summary"></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Supply lanes table">
+        <table>
+          <thead><tr><th>Lane</th><th>From → to</th><th class="num">Capacity / day</th><th class="num">Lead time</th><th>Source</th></tr></thead>
+          <tbody id="trace-table"></tbody>
+        </table>
+      </div>
+      <details class="query-details"><summary>Show the Cypher query</summary><pre id="trace-query"></pre></details>
+    </section>
+    <section class="panel eta-panel">
+      <div class="panel-heading">
+        <div><h2>Delivery time: recorded vs modeled</h2><p>What an order actually took, next to the fastest route the model allows.</p></div>
+        <label class="inline-field"><span>Order</span><select id="order-select"></select></label>
+      </div>
+      <div id="eta-result"></div>
+    </section>
+  </section>
+
+  <!-- Analytics -->
+  <section id="view-analytics" class="view" aria-labelledby="analytics-title" hidden>
+    <header class="page-intro">
+      <div>
+        <p class="kicker">Network analysis</p>
+        <h1 id="analytics-title">Which facilities hold the network together?</h1>
+        <p class="lede">Graph algorithms from Neo4j Graph Data Science, run on the modeled network. They show structure, not shortage: use them to decide what to simulate next.</p>
+      </div>
+      <span class="tag" id="gds-version">GDS</span>
+    </header>
+    <section class="stage stage-compact" aria-labelledby="analytics-stage-title">
+      <div class="stage-head">
+        <div><h2 id="analytics-stage-title">Bridges on the map</h2><p id="analytics-caption">Circle size shows betweenness: how many shortest routes pass through a facility.</p></div>
+        <ul class="stage-legend" aria-label="Legend">
+              <li><i style="--c:var(--geo-supplier)"></i>Supplier</li><li><i style="--c:var(--geo-manufacturer)"></i>Manufacturer</li><li><i style="--c:var(--geo-distributor)"></i>Distributor</li><li><i style="--c:var(--geo-retailer)"></i>Retailer</li>
+            </ul>
+      </div>
+      <div class="stage-map"><svg id="analytics-map" viewBox="0 0 1060 359" role="img" aria-label="World map where each facility's circle grows with its betweenness score."></svg></div>
+    </section>
+    <div class="analytics-grid">
+      <section class="panel">
+        <div class="panel-heading"><div><h2>Bridges</h2><p>Betweenness centrality on directed flow</p></div></div>
+        <div id="centrality-chart" class="centrality-chart"></div>
+        <p class="panel-note">A high score means many shortest routes pass through the facility. It is a hint about structural importance, not proof that a failure there causes the largest shortage.</p>
+      </section>
+      <section class="panel">
+        <div class="panel-heading"><div><h2>Connected groups</h2><p>Weakly connected components, ignoring direction</p></div></div>
+        <div id="components-list" class="components-list"></div>
+        <p class="panel-note">Reserve-only suppliers appear on their own because the analysis uses primary lanes only.</p>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-heading"><div><h2>Single-source products</h2><p>Products that depend on one primary supplier. A reserve supplier, where one exists, is listed next to it.</p></div></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Single-source products table">
+        <table>
+          <thead><tr><th>Product</th><th>Primary supplier</th><th>Reserve supplier</th><th class="num">Demand / day</th><th>Risk</th></tr></thead>
+          <tbody id="bottleneck-table"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- Assistant -->
+  <section id="view-assistant" class="view" aria-labelledby="assistant-title" hidden>
+    <header class="page-intro">
+      <div>
+        <p class="kicker">Ask the graph</p>
+        <h1 id="assistant-title">Ask a question in plain language.</h1>
+        <p class="lede">A small language model running on this machine maps your question to one of a set of reviewed, read-only Cypher queries. Numbers in the answer come from the database and the flow solver, never from the model.</p>
+      </div>
+      <span id="llm-status" class="tag">Checking local model…</span>
+    </header>
+    <div class="assistant-grid">
+      <section class="panel assistant-panel" aria-label="Question">
+        <form id="ask-form">
+          <label class="field-label" for="question">Your question</label>
+          <textarea id="question" rows="3" maxlength="600" required placeholder="For example: which products depend on a single supplier?"></textarea>
+          <div class="ask-footer">
+            <div class="question-suggestions" aria-label="Example questions">
+              <span>Try:</span>
+              <button type="button" data-question="Which products are affected if Atlas Textiles (SUP-01) shuts down?">Atlas Textiles shuts down</button>
+              <button type="button" data-question="Show the supply provenance for SKU-1360">Trace SKU-1360</button>
+              <button type="button" data-question="Which products have a single primary supplier?">Single-source products</button>
+            </div>
+            <button class="button primary" id="ask-button" type="submit">Ask</button>
+          </div>
+        </form>
+        <div id="answer" class="answer" aria-live="polite"></div>
+      </section>
+      <aside class="panel guardrail-panel" aria-labelledby="guardrail-title">
+        <h2 id="guardrail-title">What happens to your question</h2>
+        <ol>
+          <li><strong>The model proposes a plan</strong><p>Ollama, running locally, picks a query type and its parameters.</p></li>
+          <li><strong>Code checks the plan</strong><p>Only exact, pre-reviewed Cypher templates are accepted. Extra clauses or procedures are rejected.</p></li>
+          <li><strong>The database runs it read-only</strong><p>Parameters are typed, IDs must exist, depth is capped at six hops and every query has a timeout.</p></li>
+          <li><strong>You see the evidence</strong><p>The executed query and raw records are shown under every answer.</p></li>
+        </ol>
+        <button class="link-button" id="guardrail-demo" type="button">Try a request that should be blocked</button>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <p>Source data: DataCo Smart Supply Chain v5 (Constante, Silva &amp; Pereira, 2019), CC BY 4.0. 180,519 order lines, 118 products. The supply network is a documented, fictional scenario.</p>
+  <p>Tan YILDIRIM · AIDAMS GraphDB Project 3 · <a href="https://github.com/tnyldrm23-afk/supplygraph" target="_blank" rel="noopener">Source on GitHub</a></p>
+</footer>
+
+<dialog id="method-dialog" aria-labelledby="method-title">
+  <div class="modal-heading"><h2 id="method-title">How the model works</h2><button id="close-method" class="icon-button" type="button" aria-label="Close">×</button></div>
+  <div class="method-columns">
+    <div><span class="evidence-tag observed">Observed</span><h3>DataCo v5</h3><p>118 products in 51 categories, with historical demand aggregated from 180,519 order lines. A deterministic sample of 6,000 anonymous orders covers the full source period.</p></div>
+    <div><span class="evidence-tag assumed">Assumed</span><h3>Scenario network</h3><p>All 13 facilities, 962 product-specific lanes, their capacities, lead times, backup contracts and retailer assignments were built for this simulation. The source data has no real supplier network.</p></div>
+  </div>
+  <h3>How impact is calculated</h3>
+  <p>For each product, a maximum-flow solver compares what reaches retailers before and after the disruption. Retailer demand is capped and flow is conserved. Backup contracts are optional, and capacity is independent across products. Inventory, bills of materials and production steps are not modeled.</p>
+  <p>Exposure depth only limits which downstream facilities are listed. The flow calculation always uses the complete network. Modeled transit time is a shortest-path lower bound, not a delivery promise.</p>
+  <p class="citation">Constante, Silva &amp; Pereira (2019), Mendeley Data V5. <a href="https://doi.org/10.17632/8gx2fvg2k6.5" target="_blank" rel="noopener">doi:10.17632/8gx2fvg2k6.5</a> · CC BY 4.0 · Customer personal fields removed.</p>
+</dialog>
+</body></html>

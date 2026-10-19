@@ -30,3 +30,6 @@ reproducible source-data script. No rights over original DataCo content are clai
 (public domain, https://www.naturalearthdata.com/) via the world-atlas package
 (ISC license) with `scripts/create_land_map.py`. City placements on the map are
 the scenario's assumed facility locations.
+
+**Fonts:** `app/static/fonts/geist*.woff2` are Geist and Geist Mono (SIL Open Font
+License 1.1, see `app/static/fonts/OFL.txt`), served locally.

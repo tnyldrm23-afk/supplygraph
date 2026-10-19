@@ -17,9 +17,9 @@ An evidence-led supply-chain resilience simulator built with **Neo4j, FastAPI, G
 
 </div>
 
-![SupplyGraph disruption simulator](docs/screenshots/scenario-desktop.jpg)
+![SupplyGraph story: Atlas Textiles offline](docs/screenshots/story-peak.jpg)
 
-[Network detail](docs/screenshots/network-detail.jpg) · [Mobile](docs/screenshots/mobile.jpg) · [Mobile facilities](docs/screenshots/network-mobile.jpg) · [Products](docs/screenshots/product-trace.jpg) · [Analytics](docs/screenshots/analytics.jpg) · [Assistant](docs/screenshots/assistant.jpg)
+[Story](docs/screenshots/story-baseline.jpg) · [Simulator](docs/screenshots/scenario-desktop.jpg) · [Network detail](docs/screenshots/network-detail.jpg) · [Mobile](docs/screenshots/mobile.jpg) · [Mobile facilities](docs/screenshots/network-mobile.jpg) · [Products](docs/screenshots/product-trace.jpg) · [Analytics](docs/screenshots/analytics.jpg) · [Assistant](docs/screenshots/assistant.jpg)
 
 ## What it does
 
@@ -52,7 +52,8 @@ Open:
 
 | Service | Local URL | Purpose |
 |---|---|---|
-| Application | http://localhost:8080 | Responsive application via Nginx |
+| Story | http://localhost:8080 | One-page walkthrough: take Atlas Textiles offline with a real-solver dial |
+| Simulator | http://localhost:8080/app.html | Full application (Disruption, Products, Analysis, Ask the graph) |
 | API / Swagger | http://localhost:8000/docs | Interactive OpenAPI documentation |
 | API via proxy | http://localhost:8080/docs | Same API through the reverse proxy |
 | Neo4j Browser | http://localhost:7474 | Inspect graph; use credentials in your local `.env` |
@@ -64,7 +65,7 @@ For API development, start `docker compose up -d neo4j ollama`, then `make run`.
 
 ## A two-minute scenario
 
-1. In **Disruption**, choose **Atlas Textiles** and leave capacity lost at **100%**.
+1. Open the simulator at `/app.html` (or start from the story at `/`). In **Disruption**, choose **Atlas Textiles** and leave capacity lost at **100%**.
 2. Run the scenario. Observe affected products, retailer losses and units of unmet demand.
 3. Compare the backup scenario. Reserve capacity recovers part of the shortfall; it does not magically replace all lost supply.
 4. Filter the network to one SKU, then inspect its lanes in **Products**.
