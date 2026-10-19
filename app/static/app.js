@@ -28,10 +28,10 @@ function svgElement(tag, attrs, text) {
 }
 // [stage colour, plural heading]
 const kindStyle = {
-  supplier: ['#3d5f8f', 'Suppliers'],
-  manufacturer: ['#8a5f2e', 'Manufacturers'],
-  distributor: ['#5d7046', 'Distributors'],
-  retailer: ['#7a4e7a', 'Retailers']
+  supplier: ['#8ab2ff', 'Suppliers'],
+  manufacturer: ['#eeb072', 'Manufacturers'],
+  distributor: ['#b7d98a', 'Distributors'],
+  retailer: ['#e2a6ec', 'Retailers']
 };
 const CARD = { width: 196, height: 64, column: 262, top: 56, gap: 82 };
 function selectFacility(id) {
@@ -76,8 +76,8 @@ function renderGraph() {
     const nodes = state.graph.nodes.filter(n => n.kind === kind);
     const x = 30 + col * CARD.column;
     svg.append(svgElement('text', {x, y: 26, fill: color, 'font-size': 13, 'font-weight': 650}, heading));
-    svg.append(svgElement('text', {x: x + CARD.width, y: 26, fill: '#6a6e75', 'font-size': 12, 'text-anchor': 'end'}, String(nodes.length)));
-    svg.append(svgElement('line', {x1: x, x2: x + CARD.width, y1: 37, y2: 37, stroke: '#e4e0d7'}));
+    svg.append(svgElement('text', {x: x + CARD.width, y: 26, fill: '#9fb6b1', 'font-size': 12, 'text-anchor': 'end'}, String(nodes.length)));
+    svg.append(svgElement('line', {x1: x, x2: x + CARD.width, y1: 37, y2: 37, stroke: '#22383a'}));
     const offset = (4 - nodes.length) * CARD.gap / 2;
     nodes.forEach((node, index) => { positions[node.id] = {x, y: CARD.top + offset + index * CARD.gap}; });
   });
@@ -106,12 +106,12 @@ function renderGraph() {
       : affected ? `Downstream · ${location?.name || node.id}` : `${location?.name || ''} · ${node.id}`;
     const group = svgElement('g', {class: 'node', transform: `translate(${pos.x},${pos.y})`, tabindex: 0, role: 'button', 'aria-label': `${node.name}, ${node.kind}, ${detail}. Select for scenario.`, 'aria-pressed': String(selected)});
     group.append(svgElement('rect', {class: 'node-card', width: CARD.width, height: CARD.height, rx: 7,
-      fill: failed ? '#f8e6e2' : affected ? '#fbf3e4' : '#fff',
-      stroke: selected ? '#1e5b57' : failed ? '#dfa79c' : affected ? '#e2c48f' : '#d8d3c8',
+      fill: failed ? '#3a1f1c' : affected ? '#352b16' : '#152a2c',
+      stroke: selected ? '#8fe9d8' : failed ? '#a8483c' : affected ? '#8a6a2a' : '#2b4144',
       'stroke-width': selected ? 2 : 1}));
-    group.append(svgElement('rect', {x: 10, y: 12, width: 3, height: CARD.height - 24, rx: 1.5, fill: failed ? '#b23a2b' : color}));
-    group.append(svgElement('text', {x: 22, y: 28, fill: '#1d1f22', 'font-size': 13.5, 'font-weight': 600}, node.name));
-    group.append(svgElement('text', {x: 22, y: 47, fill: failed ? '#b23a2b' : affected ? '#8a560a' : '#6a6e75', 'font-size': 12, 'font-weight': failed || affected ? 600 : 400}, detail));
+    group.append(svgElement('rect', {x: 10, y: 12, width: 3, height: CARD.height - 24, rx: 1.5, fill: failed ? '#ff6f5e' : color}));
+    group.append(svgElement('text', {x: 22, y: 28, fill: '#eef1ea', 'font-size': 13.5, 'font-weight': 600}, node.name));
+    group.append(svgElement('text', {x: 22, y: 47, fill: failed ? '#ff9b8d' : affected ? '#f7bd4f' : '#9fb6b1', 'font-size': 12, 'font-weight': failed || affected ? 600 : 400}, detail));
     group.addEventListener('click', () => selectFacility(node.id));
     group.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectFacility(node.id); } });
     svg.append(group);
@@ -138,7 +138,7 @@ function renderFacilityList(failures, exposed, selectedId) {
       button.className = 'facility-item' + (selected ? ' selected' : '') + (failed ? ' failed' : '') + (affected ? ' affected' : '');
       button.setAttribute('aria-pressed', String(selected));
       button.setAttribute('aria-label', `${node.name}, ${node.kind}${note}. Select for scenario.`);
-      button.innerHTML = `<span class="facility-dot" style="background:${failed ? '#b23a2b' : color}" aria-hidden="true"></span><span><strong>${esc(node.name)}</strong><small>${esc(location?.name || node.id)} · ${esc(node.id)}${note}</small></span>`;
+      button.innerHTML = `<span class="facility-dot" style="background:${failed ? '#ff6f5e' : color}" aria-hidden="true"></span><span><strong>${esc(node.name)}</strong><small>${esc(location?.name || node.id)} · ${esc(node.id)}${note}</small></span>`;
       button.addEventListener('click', () => selectFacility(node.id));
       section.append(button);
     });
@@ -312,7 +312,7 @@ const viewTitles = {overview: 'Disruption simulator', trace: 'Products', analyti
 async function changeView(view) {
   state.view = view; error('');
   document.querySelectorAll('.view').forEach(el => { el.hidden = el.id !== 'view-' + view; });
-  document.querySelectorAll('.nav').forEach(el => {
+  document.querySelectorAll('.nav[data-view]').forEach(el => {
     el.classList.toggle('active', el.dataset.view === view);
     if (el.dataset.view === view) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
@@ -324,7 +324,7 @@ async function changeView(view) {
     if (view === 'assistant') await checkLLM();
   } catch (err) { error(err.message); }
 }
-document.querySelectorAll('.nav').forEach(button => button.addEventListener('click', () => changeView(button.dataset.view)));
+document.querySelectorAll('.nav[data-view]').forEach(button => button.addEventListener('click', () => changeView(button.dataset.view)));
 
 async function loadTrace() {
   const sku = $('trace-product').value; if (!sku) return;

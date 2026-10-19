@@ -16,7 +16,8 @@ offline" button, and the products that stay short are a grid. Following the skil
 taste floor, the whole UI now uses Geist (served locally) instead of a system serif,
 and visible em dashes were removed. The skill's engine script was not vendored; the
 page uses its own small script. Map code is shared by both pages via `geo.js` and
-`geo.css`.
+`geo.css`. The simulator now uses the story's night palette (same six colour roles,
+mint accent) and its tab strip includes Story, so both pages read as one product.
 
 
 ## Version 1.3 — the world map
