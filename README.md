@@ -13,7 +13,7 @@ An evidence-led supply-chain resilience simulator built with **Neo4j, FastAPI, G
 **AIDAMS · GraphDB · Level 2 · Project 3**  
 **Tan YILDIRIM — B00822334**
 
-[Türkçe kullanım rehberi](docs/USER_GUIDE_TR.md) · [Quick start](#quick-start) · [API](#api) · [Interface design](docs/DESIGN.md) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
+[Quick start](#quick-start) · [API](#api) · [Interface design](docs/DESIGN.md) · [Modeling](docs/MODELING.md) · [Defense guide](docs/DEFENSE.md) · [Rubric evidence](docs/RUBRIC.md)
 
 </div>
 
