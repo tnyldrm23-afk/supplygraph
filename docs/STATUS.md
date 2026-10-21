@@ -19,7 +19,7 @@ Solo author: **Tan YILDIRIM — B00822334**. Level 2, project 3.
 - Initial failed model evaluation iterations retained as evidence.
 - All 9 code cells of demo.ipynb executed successfully against real API/GDS/Ollama.
 - Editable draw.io + SVG schema, architecture and source ER diagrams.
-- README, modeling, guardrails, simulation, operations, defense and Turkish usage guides.
+- README, modeling, guardrails, simulation, operations, defense and user guides.
 
 ## Verified public baseline delivery
 - Repository: https://github.com/tnyldrm23-afk/supplygraph

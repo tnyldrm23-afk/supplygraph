@@ -122,7 +122,7 @@ Source: instructor-spec.md, retrieved 2026-10-17. Repository: https://github.com
 ## Scope decisions
 A product-specific distribution network, not a bill-of-materials manufacturing planner.
 No live supplier feeds, commercial ETA promises, purchasing or financial transactions.
-English application and delivery docs for AIDAMS; Turkish explanations for the owner.
+English application and delivery docs for AIDAMS.
 Deterministic NetworkX algorithms may serve tests/reference comparisons, never be presented as GDS.
 
 ## M11 — Visual refinement requested by the owner
