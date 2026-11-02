@@ -514,7 +514,7 @@
       "Take it offline steps to 0%: 67.1% delivered, shortfall reaches Paris, London and New York; button offers Start again",
       "Story console for Porto Works at 50% with backups opens /app.html?facility=MFG-01&reduction=50&backups=1&run=1 and the simulator runs it (40 affected)",
       "/app.html#analytics opens the analysis view directly",
-      "Owner rejected scroll-driven capacity and the pinned horizontal rail; both removed"
+      "Scroll-driven capacity and the pinned horizontal rail were removed for usability"
     ],
     "app_regression": "320-1440 px, four views after a scenario run: no overflow, no JS exceptions"
   }
