@@ -1,29 +1,26 @@
 # Interface design
 
-## Version 1.4: story page and simulator split (scroll-craft skill)
+## Version 1.4: story page and simulator split
 
-`/` is now a one-page story built with the scroll-craft skill's method (brief,
-feeling curve, grammar, signature move; see `docs/scrollcraft/`). Grammar: *live
-surface*, so the page is the product running on real API data, with the app's tab
-strip on top and a live status bar at the bottom. The simulator moved to
+`/` is now a one-page story, planned with the Scrollcraft design guidelines (journey,
+feeling curve, one signature interaction). The page is the product running on real API
+data, with the app's tab strip on top and a live status bar at the bottom. The simulator moved to
 `/app.html`; the story's closing console deep-links into it
 (`?facility=&reduction=&backups=&run=1`) and the simulator runs that scenario.
 `/app.html#trace`, `#analytics` and `#assistant` open a view directly.
 
-The first story build used pinned, scroll-driven sections. The owner rejected them,
-so the page now scrolls normally: the capacity dial is a slider with a "Take it
-offline" button, and the products that stay short are a grid. Following the skill's
-taste floor, the whole UI now uses Geist (served locally) instead of a system serif,
-and visible em dashes were removed. The skill's engine script was not vendored; the
-page uses its own small script. Map code is shared by both pages via `geo.js` and
+The first story build used pinned, scroll-driven sections. They made the page harder
+to use, so it now scrolls normally: the capacity dial is a slider with a "Take it
+offline" button, and the products that stay short are a grid. The whole UI now uses
+Geist (served locally) instead of a system serif. The page uses its own small script
+rather than a scroll library. Map code is shared by both pages via `geo.js` and
 `geo.css`. The simulator now uses the story's night palette (same six colour roles,
 mint accent) and its tab strip includes Story, so both pages read as one product.
 
 
 ## Version 1.3 — the world map
 
-The owner asked for an interface that makes people say "wow" without losing the
-clarity of 1.2. The signature addition is a dark, dotted world map that appears on
+The goal was a more striking interface without losing the clarity of 1.2. The signature addition is a dark, dotted world map that appears on
 three screens and always answers that screen's question:
 
 - **Disruption:** "Where the goods flow". Facilities sit at their assumed cities and
@@ -46,8 +43,7 @@ product. The backdrop is generated from public-domain Natural Earth data by
 
 ## Version 1.2 — editorial redesign
 
-The owner found the 1.1 interface hard to follow and said it looked like a generic
-AI dashboard: a dark navy sidebar, a fake workspace switcher, an "AI" badge, arrow
+The 1.1 interface was hard to follow and looked like a generic dashboard template: a dark navy sidebar, a fake workspace switcher, an "AI" badge, arrow
 icons on every button and marketing slogans ("Your network. Every possibility.",
 "Connected insight. Confident decisions."). Version 1.2 removes all of that and
 reorganises each screen around the question it answers.

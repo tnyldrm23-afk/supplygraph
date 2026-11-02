@@ -163,7 +163,7 @@ Development dependencies are universally resolved in `requirements-lock.txt`, wi
 
 ## Container registry
 
-The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). The public image was downloaded with an empty Docker credential configuration and exercised against real Neo4j/GDS: health, product inventory, outage simulation and centrality passed. See [registry verification](reports/registry-verification.json). Versioned builds are listed on the [releases page](https://github.com/tnyldrm23-afk/supplygraph/releases). The current interface uses larger typography, visible mobile navigation, a full-width map and a facility-list alternative; see [design and browser verification](docs/DESIGN.md).
+The Container workflow builds `linux/amd64` and `linux/arm64` API images to **`ghcr.io/tnyldrm23-afk/supplygraph`** on main/tag pushes. The registry source link is [GitHub Packages](https://github.com/tnyldrm23-afk/supplygraph/pkgs/container/supplygraph). The public image was downloaded with an empty Docker credential configuration and exercised against real Neo4j/GDS: health, product inventory, outage simulation and centrality passed. See [registry verification](reports/registry-verification.json). Versioned builds are listed on the [releases page](https://github.com/tnyldrm23-afk/supplygraph/releases). The interface and its browser verification are described in [design notes](docs/DESIGN.md).
 
 ```bash
 # Use the published API image with the repository's Compose stack:

@@ -54,7 +54,7 @@ for the instructor to interpret for a solo submission; no collaborators are inve
 Tan must be able to explain the submitted choices; docs/DEFENSE.md provides practice.
 No deadline was supplied. No paid API, hosting or cloud deployment is required.
 
-## Owner-requested visual refinement
+## Visual refinement
 Larger readable typography, navy/blue palette, consistent vector icons, visible
 mobile navigation, full-width map and mobile facility list are implemented.
 Twenty application-layout checks passed across 321/376/768/1024/1440 px and all

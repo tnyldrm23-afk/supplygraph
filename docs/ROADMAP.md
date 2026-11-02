@@ -125,7 +125,7 @@ No live supplier feeds, commercial ETA promises, purchasing or financial transac
 English application and delivery docs for AIDAMS.
 Deterministic NetworkX algorithms may serve tests/reference comparisons, never be presented as GDS.
 
-## M11 — Visual refinement requested by the owner
+## M11 — Visual refinement
 - [x] Replace the small pale typography with a readable navy/blue interface and stronger contrast.
 - [x] Keep navigation labels visible on narrow screens; provide consistent native vector icons.
 - [x] Separate scenario configuration, network inspection, impact and recovery into clear sections.
@@ -133,5 +133,5 @@ Deterministic NetworkX algorithms may serve tests/reference comparisons, never b
 - [x] Replace internal scenario IDs in the main result with a useful quantity summary.
 - [x] Verify all four screens, map/list selection, recovery, filtering and keyboard use in the browser.
 - [x] Twenty layout checks across five widths; eight contrast samples passed 4.5:1; no application-body overflow.
-- [x] Updated screenshots and owner guide published through merged PR #3 with two labeled solo reviews.
+- [x] Updated screenshots and user guide published through merged PR #3 with two labeled solo reviews.
 - [x] Release v1.1.0 public image anonymously downloaded; UI hashes matched; 10 integration tests passed; all four services healthy.
